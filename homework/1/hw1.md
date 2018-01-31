@@ -1,0 +1,171 @@
+CSC720 Homework 1
+
+Due Date: Tuesday, February 13, 2018, By Midnight
+
+(Note: a few questions require you to construct DFAs. An easy way to
+draw a DFA is using the JFLAP software we posted in the class website.
+You can draw the DFAs in the JFLAP and then copy the screen to your
+homework.)
+
+**Problem 1** (5 points) answer the following questions:
+
+a.  If A has *a* elements and B has *b* elements, how many elements are
+    in AxB?
+
+The Cartesian product of A×B represents the set of ordered pairs (u,v) where u ∈ A and v ∈ B. Therefore, |A × B| = |A|·|B|.
+
+b.  If C is a set with *c* elements, how many elements are in the power
+    set of C?
+
+A power set is the set of all subsets, including the set itself and the empty set. The lenght of the powerset of C can be represented as | P(C) | = 2^c.
+
+c.  Let R={(1, 2), (2, 3), (2, 4)} is a relation on the set A = {1, 2,
+    3, 4}. What is R\* (Reflexive and transitive closure)?
+
+Start with R
+
+R = {(1, 2), (2, 3), (2, 4)}
+
+Build the relexive closure
+
+R ∪{(a,a):a∈A} = {(1, 2), (2, 3), (2, 4), {1, 1}, {2, 2}, {3, 3}, {4, 4}}
+
+Add the transitive items
+
+R* = {(1, 2), (2, 3), (2, 4), {1, 1}, {2, 2}, {3, 3}, {4, 4}, (1, 3), (1, 4)}
+
+**Problem 2** (5 points) 1.1 The following are the state diagrams of a
+DFA (M1). Answer the following questions about each of these machines.
+
+![](./media/rId5.png){width="1.4720002187226597in"
+height="1.6884700349956256in"}
+
+a.  What is the start state?
+
+q1
+
+b.  What is the set of accept states?
+
+{q2}
+
+c.  What sequence of states does the machine go through on input aabb?
+
+[q1, q2, q3, q1, q1]
+
+d.  Does the machine accept the string aabb?
+
+No. This sequence stops at q1, which is not an accept state.
+
+e.  Does the machine accept the string ε?
+
+No. ε is not a member of the recognized language.
+
+**Problem 3** (10 points) 1.4 Each of the following languages is the
+intersection of two simpler languages. In each part, construct DFAs for
+the simpler languages, then combine them using the construction
+discussed in footnote 3 (page 46) to give the state diagram of a DFA for
+the language given. In all parts, Σ = {a, b}.
+
+a\. {w| w has at least three a’s and at least two b’s}
+
+DFA to recognize at least 3 a's:
+
+![](3a1.png)
+
+DFA to recognize at least 2 b's:
+
+![](3a2.png)
+
+Combined DFA:
+
+b\. {w| w has exactly two a’s and at least two b’s}
+
+DFA to recognize exactly 2 a's:
+
+![](3b1.png)
+
+DFA to recognize at least 2 b's (same as part a):
+
+![](3a2.png)
+
+Combined DFA:
+
+**Problem 4** (10 points) 1.6 Give state diagrams of DFAs recognizing
+the following languages. In all parts, the alphabet is {0,1}.
+
+a.  {w| w begins with a 1 and ends with a 0}
+
+b.  {w| w contains at least three 1s}
+
+**Problem 5** (10 points) 1.7 Give state diagrams of NFAs with the
+specified number of states recognizing each of the following languages.
+In all parts, the alphabet is {0,1}.
+
+a\. The language {w| w ends with 00} with three states
+
+**Problem 6** (10 points) 1.16 Use the construction given in Theorem
+1.39 to convert the following nondeterministic finite automata to
+equivalent deterministic finite automata.
+
+![](./media/rId6.png){width="1.9895833333333333in"
+height="2.2518471128608923in"}
+
+**Problem 7** (20 points) 1.18 Give regular expressions generating the
+following languages. In all parts the alphabet is {0, 1}
+
+a.  {w | w has at least one 1}
+
+b.  {w | w starts and ends with same symbol}
+
+c.  {w | |w| &lt; 5}
+
+d.  {w | every 3rd position of w is 1}
+
+**Problem 8** (10 points) 1.19 Use the procedure described in Lemma 1.55
+to convert the following regular expressions to nondeterministic finite
+automata.
+
+a\. (01)\*000(01)\*
+
+**Problem 9** (20 points) A syntactically valid email address is made up
+of a user name followed by ‘@’ followed by a list of at least two domain
+names separated by ‘.’. Assume that user and domain names are made up of
+letters \[a-z\] and digits \[0-9\], and the main domain name, i.e., the
+last domain name, contains two or three characters. For example, the
+following three addresses are valid.
+
+abc@dsu.edu
+
+abc@pluto.dsu.edu
+
+11@123.com
+
+but the following three are invalid:
+
+a.b.ab
+
+ab@ab
+
+ab@ab.abcd
+
+1.  Use JFLAP design a deterministic finite automaton to recognize valid
+    mail address. Enclose your DFA’s JFLAP file (.jff) in your
+    homework submission.
+
+Start with a regex:
+
+(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)*@(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)*.(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0+.)*
+
+2.  Test the above six testing cases using JFLAP Multiple Rn function.
+    You can include more testing cases if you want. Include a screenshot
+    of your testing results in your homework submission as below:
+
+![](./media/rId7.png){width="4.231999125109361in"
+height="3.6786275153105863in"}
+
+3.  Use a programming language at your choice to implement the DFA
+    designed in Step 1. Submit your source code and also write a readme
+    file to show how to compile your program, how to run your program,
+    and some testing results you have.
+
+
