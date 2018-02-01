@@ -1,5 +1,6 @@
 from string import ascii_lowercase as lower, digits
 from collections import ChainMap
+import graphviz
 
 class DFA:
   """
@@ -20,6 +21,7 @@ class DFA:
     An optional set of accept states may be provided. If omitted, the
     last state listed is assumed to be the one and only accept state.
     """
+    self.transitions = transitions
 
     # Set of states Q
     self.Q = set([i[0] for i in transitions] + [i[2] for i in transitions])
@@ -87,6 +89,17 @@ class DFA:
       ['</automaton></structure>']
     )
 
+  def to_png(self, filename):
+    g = graphviz.Digraph(format='png')
+    
+    for state in self.Q:
+      g.node(state)
+      
+    for e in self.transitions:
+        g.edge(e[0], e[2], e[1])
+        
+    g.render(filename)
+
   @classmethod
   def email_validator(cls):
     """
@@ -126,3 +139,5 @@ if __name__ == '__main__':
   ev = DFA.email_validator()
   with open('ev.jff','w') as jff:
     jff.write(ev.to_xml())
+  
+  ev.to_png('ev')
