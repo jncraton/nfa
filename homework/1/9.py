@@ -60,10 +60,38 @@ class DFA:
   
     # Recurse using our next state and the rest of our input
     return self.accept(input[1:], next)
+    
+  def to_xml(self):
+    """
+    Converts the DFA to xml as used by JFLAP.
+    
+    I do not expect any bonus points for the readability of this method.
+    
+    >>> ev = DFA.email_validator()
+    >>> len(ev.to_xml())
+    19339
+    """
+    ids = {s: i for (i, s) in enumerate(self.Q)}
+
+    return '\n'.join(
+      ['<?xml version="1.0" encoding="UTF-8" standalone="no"?>', '<structure><type>fa</type><automaton>'] +
+      [
+        '<state id="%d" name="%s"><x>0</x><y>0</y>%s</state>' %
+        ( ids[name], name, '<initial/>' if name == self.qₒ else '<final/>' if name in self.F else '' ) 
+        for name in self.Q
+      ] + [
+        '<transition><from>%d</from><to>%d</to><read>%s</read></transition>' % 
+        ( ids[t[0][0]], ids[t[1]], t[0][1] ) 
+        for t in self.δ.items()
+      ] + 
+      ['</automaton></structure>']
+    )
 
   @classmethod
   def email_validator(cls):
     """
+    Builds a DFA instance that operates as a simple email address validator.
+    
     >>> ev = DFA.email_validator()
     >>> ev.accept('abc@dsu.edu')
     True
@@ -93,3 +121,8 @@ class DFA:
       ('tld length 3', lower+digits, 'domain'),
       ('tld length 3', '.', 'tld length 0'),
     ], ['tld length 2', 'tld length 3'])
+    
+if __name__ == '__main__':
+  ev = DFA.email_validator()
+  with open('ev.jff','w') as jff:
+    jff.write(ev.to_xml())
