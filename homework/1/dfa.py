@@ -33,8 +33,8 @@ class DFA:
     # δ: Q × Σ → Q
     self.δ = dict(ChainMap(*[{(i[0], char): i[2] for char in i[1]} for i in transitions]))
 
-    # Start state qₒ
-    self.qₒ = transitions[0][0]
+    # Start state q0
+    self.q0 = transitions[0][0]
     
     # Accept states F
     self.F = accept or transitions[-1][2]
@@ -48,7 +48,7 @@ class DFA:
     """
     
     # Begin at the start state if we aren't called with a state
-    state = state or self.qₒ
+    state = state or self.q0
   
     # Return our acceptance status when we're out of input
     if len(input) == 0:
@@ -79,7 +79,7 @@ class DFA:
       ['<?xml version="1.0" encoding="UTF-8" standalone="no"?>', '<structure><type>fa</type><automaton>'] +
       [
         '<state id="%d" name="%s"><x>0</x><y>0</y>%s</state>' %
-        ( ids[name], name, '<initial/>' if name == self.qₒ else '<final/>' if name in self.F else '' ) 
+        ( ids[name], name, '<initial/>' if name == self.q0 else '<final/>' if name in self.F else '' ) 
         for name in self.Q
       ] + [
         '<transition><from>%d</from><to>%d</to><read>%s</read></transition>' % 
@@ -102,7 +102,7 @@ class DFA:
     # Add arrow to start state
     g.attr('node', shape='none')
     g.node("")
-    g.edge("", self.qₒ)
+    g.edge("", self.q0)
     
     g.render(filename)
 
