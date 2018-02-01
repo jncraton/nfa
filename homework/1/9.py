@@ -93,11 +93,17 @@ class DFA:
     g = graphviz.Digraph(format='png')
     
     for state in self.Q:
+      g.attr('node', shape='doublecircle' if state in self.F else 'circle')
       g.node(state)
       
     for e in self.transitions:
-        g.edge(e[0], e[2], e[1])
-        
+      g.edge(e[0], e[2], e[1])
+    
+    # Add arrow to start state
+    g.attr('node', shape='none')
+    g.node("")
+    g.edge("", self.qₒ)
+    
     g.render(filename)
 
   @classmethod
