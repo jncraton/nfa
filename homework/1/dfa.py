@@ -90,7 +90,7 @@ class DFA:
     )
 
   def to_png(self, filename):
-    g = graphviz.Digraph(format='png')
+    g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph'})
     
     for state in self.Q:
       g.attr('node', shape='doublecircle' if state in self.F else 'circle')
