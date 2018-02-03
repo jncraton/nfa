@@ -2,6 +2,8 @@ from string import ascii_lowercase as lower, digits
 from collections import ChainMap
 import graphviz
 
+from IPython.display import display_html
+
 class DFA:
   """
   Implements a Deterministic Finite Automaton
@@ -20,6 +22,14 @@ class DFA:
     
     An optional set of accept states may be provided. If omitted, the
     last state listed is assumed to be the one and only accept state.
+
+    >>> dfa = DFA([('q0','b','q0'),('q0','a','q1')])
+    >>> dfa.accept('a')
+    True
+    >>> dfa.accept('bba')
+    True
+    >>> dfa.accept('b')
+    False
     """
     self.transitions = transitions
 
@@ -89,7 +99,7 @@ class DFA:
       ['</automaton></structure>']
     )
 
-  def to_png(self, filename):
+  def to_graphviz(self):
     g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph'})
     
     for state in self.Q:
@@ -103,8 +113,28 @@ class DFA:
     g.attr('node', shape='none')
     g.node("")
     g.edge("", self.q0)
+
+    return g
+
+  def show(self):
+    display_html(self.to_graphviz()._repr_svg_(), raw=True)
+
+  def test(self, accept, reject):
+    """
+    Tests the DFA against a list of strings expected to be accepted 
+    and a list expected to be rejected.
+
+    Returns nothing, but raises an AssertionError on failure.
+
+    >>> dfa = DFA([('q0','a','q0'),('q0','b','q1')])
+    >>> dfa.test(accept=['b','ba','ab'],reject=['a','aaa'])
+    """
     
-    g.render(filename)
+    for a in accept:
+      assert(self.accept(a))
+
+    for r in reject:
+      assert(self.accept(r) == False)
 
   @classmethod
   def email_validator(cls):
@@ -140,10 +170,3 @@ class DFA:
       ('tld length 3', lower+digits, 'domain'),
       ('tld length 3', '.', 'tld length 0'),
     ], ['tld length 2', 'tld length 3'])
-    
-if __name__ == '__main__':
-  ev = DFA.email_validator()
-  with open('ev.jff','w') as jff:
-    jff.write(ev.to_xml())
-  
-  ev.to_png('ev')

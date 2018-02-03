@@ -1,4 +1,6 @@
-CSC720 Homework 1
+% CSC720 Homework 1
+% Jon Craton
+% February 13, 2018
 
 Due Date: Tuesday, February 13, 2018, By Midnight
 
@@ -7,38 +9,39 @@ draw a DFA is using the JFLAP software we posted in the class website.
 You can draw the DFAs in the JFLAP and then copy the screen to your
 homework.)
 
-**Problem 1** (5 points) answer the following questions:
+## Problem 1 (5 points)
 
-a.  If A has *a* elements and B has *b* elements, how many elements are
-    in AxB?
+> Answer the following questions:
 
-The Cartesian product of A×B represents the set of ordered pairs (u,v) where u ∈ A and v ∈ B. Therefore, |A × B| = |A|·|B|.
+a. If A has *a* elements and B has *b* elements, how many elements are in AxB?
 
-b.  If C is a set with *c* elements, how many elements are in the power
-    set of C?
+The Cartesian product of A×B represents the set of ordered pairs (u,v) where u ∈ A and v ∈ B. Therefore: 
 
-A power set is the set of all subsets, including the set itself and the empty set. The lenght of the powerset of C can be represented as | P(C) | = 2^c.
+    |A × B| = |A|·|B|.
 
-c.  Let R={(1, 2), (2, 3), (2, 4)} is a relation on the set A = {1, 2,
-    3, 4}. What is R\* (Reflexive and transitive closure)?
+b. If C is a set with *c* elements, how many elements are in the power set of C?
 
-Start with R
+A power set is the set of all subsets, including the set itself and the empty set. The lenght of the powerset of C can be represented as | P(C) | = 2^c^.
 
-R = {(1, 2), (2, 3), (2, 4)}
+c. Let R={(1, 2), (2, 3), (2, 4)} is a relation on the set A = {1, 2, 3, 4}. What is R\* (Reflexive and transitive closure)?
+
+Start with R:
+
+    R = {(1, 2), (2, 3), (2, 4)}
 
 Build the relexive closure
 
-R ∪{(a,a):a∈A} = {(1, 2), (2, 3), (2, 4), {1, 1}, {2, 2}, {3, 3}, {4, 4}}
+    R∪{(a,a):a∈A} = {(1, 2), (2, 3), (2, 4), {1, 1}, {2, 2}, {3, 3}, {4, 4}}
 
 Add the transitive items
 
-R* = {(1, 2), (2, 3), (2, 4), {1, 1}, {2, 2}, {3, 3}, {4, 4}, (1, 3), (1, 4)}
+    R* = {(1, 2), (2, 3), (2, 4), {1, 1}, {2, 2}, {3, 3}, {4, 4}, (1, 3), (1, 4)}
 
-**Problem 2** (5 points) 1.1 The following are the state diagrams of a
-DFA (M1). Answer the following questions about each of these machines.
+## Problem 2 (5 points) 
 
-![](./media/rId5.png){width="1.4720002187226597in"
-height="1.6884700349956256in"}
+> The following are the state diagrams of a DFA (M1). Answer the following questions about each of these machines.
+
+![](./media/rId5.png)
 
 a.  What is the start state?
 
@@ -60,42 +63,63 @@ e.  Does the machine accept the string ε?
 
 No. ε is not a member of the recognized language.
 
-**Problem 3** (10 points) 1.4 Each of the following languages is the
-intersection of two simpler languages. In each part, construct DFAs for
-the simpler languages, then combine them using the construction
-discussed in footnote 3 (page 46) to give the state diagram of a DFA for
-the language given. In all parts, Σ = {a, b}.
+## Problem 3 (10 points) 
 
-Before I begin to answer this problem, I'm going to include a Python class that I have built to work with DFAs:
+> Each of the following languages is the intersection of two simpler languages. In each part, construct DFAs for the simpler languages, then combine them using the construction
+discussed in footnote 3 (page 46) to give the state diagram of a DFA for the language given. In all parts, Σ = {a, b}.
 
-```{python, source='dfa.py'}
-```
-
-a\. {w| w has at least three a’s and at least two b’s}
+a. {w| w has at least three a’s and at least two b’s}
 
 DFA to recognize at least 3 a's:
 
-```{python, term=True}
-at_least_3_a = DFA([
+From here on, I'll be using the Python class that I have built to work with DFAs from problem 9. The full source is available there.
+
+```{python, source='dfa.py', echo=False}
+```
+
+```python
+dfa = DFA([
   ('start', 'a', 'one a'),
   ('start', 'b', 'start'),
   ('one a', 'a', 'two a'),
   ('one a', 'b', 'one a'),
   ('two a', 'a', 'three a'),
   ('two a', 'b', 'two a'),
-  ('three a', 'b', 'three a'),
+  ('three a', 'ab', 'three a'),
 ])
 
-at_least_3_a.accept('ababab')
+dfa.test(
+  accept = ['abababa', 'aaa', 'baaab'],
+  reject = ['bbbbbab', 'aa', 'abbba']
+)
 
-at_least_3_a.to_png('3atmp')
+dfa.show()
 ```
 
-![](3atmp.png)
+Here's the same DFA in JFLAP just to demonstrate that I understand how to use JFLAP:
 
 ![](3a1.png)
 
 DFA to recognize at least 2 b's:
+
+```python
+dfa = DFA([
+  ('start', 'b', 'one b'),
+  ('start', 'a', 'start'),
+  ('one b', 'b', 'two b'),
+  ('one b', 'a', 'one b'),
+  ('two b', 'ab', 'two b'),
+])
+
+dfa.test(
+  accept = ['bb', 'bbaa', 'abbaba'],
+  reject = ['aaaaaba', 'b', 'aaab']
+)
+
+dfa.show()
+```
+
+And again in from JFLAP:
 
 ![](3a2.png)
 
@@ -190,5 +214,8 @@ height="3.6786275153105863in"}
     designed in Step 1. Submit your source code and also write a readme
     file to show how to compile your program, how to run your program,
     and some testing results you have.
+
+```{python, source='dfa.py', evaluate=False}
+```
 
 
