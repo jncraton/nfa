@@ -1,27 +1,7 @@
 from string import ascii_lowercase as lower, digits
-from collections import ChainMap
 import graphviz
-import random
 
 from IPython.display import display_html
-
-# http://ethanschoonover.com/solarized
-BASE01 = '#586e75'
-BASE00 = '#657b83'
-BASE0 = '#839496'
-BASE3 = '#fdf6e3'
-BASE3 = '#f5f5f5'
-
-YELLOW = '#b58900'
-ORANGE = '#cb4b16'
-VIOLET = '#6c71c4'
-RED = '#dc323f'
-BLUE = '#268bd2'
-MAGENTA = '#d33682'
-CYAN = '#2aa198'
-GREEN = '#859900'
-
-ACCENTS = [YELLOW, ORANGE, VIOLET, RED, BLUE, MAGENTA, CYAN, GREEN]
 
 class NFA:
   """
@@ -142,7 +122,15 @@ class NFA:
     )
 
   def to_graphviz(self):
-    g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph', 'bgcolor': BASE3, 'overlap': 'scale', 'concentrate': 'true', 'splines':'true'})
+    """ Converts to a graphviz object for graphical display """
+
+    # http://ethanschoonover.com/solarized
+    BASE01 = '#586e75'
+    ORANGE = '#cb4b16'
+    VIOLET = '#6c71c4'
+    BGCOLOR = '#f5f5f5'
+
+    g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph', 'bgcolor': BGCOLOR, 'overlap': 'scale', 'concentrate': 'true', 'splines':'true'})
     
     for state in self.Q:
       g.attr('node', shape='doublecircle' if state in self.F else 'circle')
