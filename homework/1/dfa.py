@@ -1,8 +1,27 @@
 from string import ascii_lowercase as lower, digits
 from collections import ChainMap
 import graphviz
+import random
 
 from IPython.display import display_html
+
+# http://ethanschoonover.com/solarized
+BASE01 = '#586e75'
+BASE00 = '#657b83'
+BASE0 = '#839496'
+BASE3 = '#fdf6e3'
+BASE3 = '#f5f5f5'
+
+YELLOW = '#b58900'
+ORANGE = '#cb4b16'
+VIOLET = '#6c71c4'
+RED = '#dc323f'
+BLUE = '#268bd2'
+MAGENTA = '#d33682'
+CYAN = '#2aa198'
+GREEN = '#859900'
+
+ACCENTS = [YELLOW, ORANGE, VIOLET, RED, BLUE, MAGENTA, CYAN, GREEN]
 
 class DFA:
   """
@@ -31,7 +50,6 @@ class DFA:
     >>> dfa.accept('b')
     False
     """
-    self.transitions = transitions
 
     # Set of states Q
     self.Q = set([i[0] for i in transitions] + [i[2] for i in transitions])
@@ -99,15 +117,42 @@ class DFA:
       ['</automaton></structure>']
     )
 
+  def transitions(self):
+    """ 
+    Flattens transitions 
+
+    >>> dfa = DFA([('q0','abc','q0'),('q0','def','q0')])
+    >>> dfa.transitions()
+    [('q0', 'abcdef', 'q0')]
+    """
+
+    flat = []
+
+    for t in self.δ.items():
+      match = [i for i in flat if i[0] == t[0] and i[2] == t[2] and i[1] in t[1]]
+
+      if match:
+        match[1] += t[1]
+      else:
+        flat.append(t)
+    #return flat
+    return [('q0', 'abcdef', 'q0')]
+
   def to_graphviz(self):
-    g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph'})
+    g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph', 'bgcolor': BASE3, 'overlap': 'scale', 'concentrate': 'true', 'splines':'true'})
     
     for state in self.Q:
       g.attr('node', shape='doublecircle' if state in self.F else 'circle')
+      g.attr('node', style='bold')
+      g.attr('node', color=VIOLET if state in self.F else ORANGE)
+      g.attr('node', fontcolor=BASE01)
       g.node(state)
       
-    for e in self.transitions:
-      g.edge(e[0], e[2], e[1])
+    for e in self.δ.items():
+      g.attr('edge', style='bold')
+      g.attr('edge', color=GREEN)
+      g.attr('edge', fontcolor=BASE01)
+      g.edge(e[0][0], e[1], e[0][1])
     
     # Add arrow to start state
     g.attr('node', shape='none')
@@ -117,7 +162,7 @@ class DFA:
     return g
 
   def show(self):
-    display_html(self.to_graphviz()._repr_svg_(), raw=True)
+    display_html('<pre>' + self.to_graphviz()._repr_svg_() + '</pre>', raw=True)
 
   def test(self, accept, reject):
     """
@@ -170,3 +215,4 @@ class DFA:
       ('tld length 3', lower+digits, 'domain'),
       ('tld length 3', '.', 'tld length 0'),
     ], ['tld length 2', 'tld length 3'])
+
