@@ -61,7 +61,7 @@ No. This sequence stops at q1, which is not an accept state.
 
 e.  Does the machine accept the string ε?
 
-No. ε is not a member of the recognized language.
+No. The empty string ε would leave the machine in its start state. The start state is not an accept state.
 
 ## Problem 3 (10 points) 
 
@@ -174,25 +174,80 @@ u.test(
 u.show()
 ```
 
-**Problem 4** (10 points) 1.6 Give state diagrams of DFAs recognizing
+**Problem 4** (10 points) Give state diagrams of DFAs recognizing
 the following languages. In all parts, the alphabet is {0,1}.
 
 a.  {w| w begins with a 1 and ends with a 0}
 
+```python
+a = DFA([
+  ('q0', '1', 'q1'),
+  ('q1', '1', 'q1'),
+  ('q1', '0', 'q2'),
+  ('q2', '1', 'q1'),
+  ('q2', '0', 'q2'),
+])
+
+a.show()
+
+a.test(
+  accept = ['10', '11010101010', '10000', '111111110'],
+  reject = ['01', '1', '101', '10101011']
+)
+```
+
 b.  {w| w contains at least three 1s}
 
-**Problem 5** (10 points) 1.7 Give state diagrams of NFAs with the
+```python
+a = DFA([
+  ('0a', '1', '1a'),
+  ('0a', '0', '0a'),
+  ('1a', '1', '2a'),
+  ('1a', '0', '1a'),
+  ('2a', '1', '>2a'),
+  ('2a', '0', '2a'),
+  ('>2a', '10', '>2a'),
+])
+
+a.show()
+
+a.test(
+  accept = ['1010101', '111', '011110'],
+  reject = ['0000010', '11', '10001']
+)
+```
+
+**Problem 5** (10 points) Give state diagrams of NFAs with the
 specified number of states recognizing each of the following languages.
 In all parts, the alphabet is {0,1}.
 
 a\. The language {w| w ends with 00} with three states
 
-**Problem 6** (10 points) 1.16 Use the construction given in Theorem
+```python
+a = NFA([
+  ('q0', '1', 'q0'),
+  ('q1', '1', 'q0'),
+  ('q2', '1', 'q0'),
+  ('q0', '0', 'q1'),
+  ('q1', '0', 'q2'),
+  ('q2', '0', 'q2'),
+])
+
+a.show()
+
+a.test(
+  accept = ['00', '100', '101010000'],
+  reject = ['1010', '11', '10101011010']
+)
+```
+
+This NFA is also a DFA.
+
+**Problem 6** (10 points) Use the construction given in Theorem
 1.39 to convert the following nondeterministic finite automata to
 equivalent deterministic finite automata.
 
-![](./media/rId6.png){width="1.9895833333333333in"
-height="2.2518471128608923in"}
+![](./media/rId6.png)
 
 **Problem 7** (20 points) 1.18 Give regular expressions generating the
 following languages. In all parts the alphabet is {0, 1}
