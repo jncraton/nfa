@@ -181,6 +181,23 @@ class DFA:
     for r in reject:
       assert self.accept(r) == False, "Failed to reject %s" % r
 
+  def to_dfa(self):
+    """
+    Convert the NFA to a DFA
+
+    TODO: Right now this only prunes obvious reflexive transitions
+    and doesn't actually convert a complex DFA to an NFA
+    >>> a = DFA([('0a','a','1a'),('0a','ba','0a'),('1a','ab','1a')])
+    >>> a.to_dfa()
+    >>> len(a.transitions)
+    4
+    """
+    
+    self.transitions = [t for t in self.transitions 
+      if t[0] != t[2] or # Non-reflexive transitions
+      len(self.δ(t[0], t[1])) == 1
+    ]
+
   @classmethod
   def union(cls, a, b):
     """

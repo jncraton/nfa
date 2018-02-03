@@ -127,6 +127,7 @@ Combined DFA:
 
 ```python
 u = DFA.union(a,b)
+u.to_dfa()
 
 u.test(
   accept = ['aaabb', 'bbaaa', 'ababababab'],
