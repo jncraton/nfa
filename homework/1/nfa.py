@@ -51,7 +51,7 @@ class NFA:
     self.q0 = q0 or transitions[0][0]
     
     # Accept states F
-    self.F = F or (transitions[-1][2],)
+    self.F = F or set([transitions[-1][2]])
 
   def δ(self, current, input):
     """
@@ -208,8 +208,8 @@ class NFA:
         us = t[0]
         them = t[2]
             
-        # Follow the transition and add their external transitions to us
-        self.transitions += [(us,t[1],t[2]) for t in self.transitions if t[0] == them]
+        # Follow the transition and add their external transitions to ourself
+        self.transitions += [(us,t[1],t[2]) for t in self.transitions if t[0] == them and t[2] != us]
 
         # Remove the ε transition
         self.transitions.remove(t)
@@ -222,10 +222,12 @@ class NFA:
 
         # Inherit their other properties
         self.q0 = us if self.q0 == them else self.q0
-        
         if them in self.F:
           self.F.remove(them)
           self.F.add(us)
+
+        # Update set of states
+        self.Q = set([t[0] for t in self.transitions] + [t[2] for t in self.transitions])
 
         return self.ε_elimination()
 

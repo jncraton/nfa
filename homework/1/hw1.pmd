@@ -174,8 +174,9 @@ u.test(
 u.show()
 ```
 
-## Problem 4 (10 points) Give state diagrams of DFAs recognizing
-the following languages. In all parts, the alphabet is {0,1}.
+## Problem 4 (10 points)
+
+Give state diagrams of DFAs recognizing the following languages. In all parts, the alphabet is {0,1}.
 
 a.  {w| w begins with a 1 and ends with a 0}
 
@@ -254,7 +255,7 @@ equivalent deterministic finite automata.
 First, let's build that NFA.
 
 ```python
-a = NFA([
+n = NFA([
   ('1', 'ε', '2'),
   ('2', 'a', '1'),
   ('1', 'a', '3'),
@@ -262,13 +263,38 @@ a = NFA([
   ('3', 'ab', '2'),
 ])
 
-a.test(
+n.show()
+
+n.test(
   accept = ['ab', 'aa', 'abbbbba', 'abbbb'],
-  reject = []
+  reject = ['a']
+)
+```
+
+Now, let's run it through an ε-elimination algorithm.
+
+```python
+n.ε_elimination()
+n.show()
+
+n.test(
+  accept = ['ab', 'aa', 'abbbbba', 'abbbb'],
+  reject = ['a']
 )
 
-a.to_dfa()
-a.show()
+```
+
+We can then convert to a DFA.
+
+```python
+n.to_dfa()
+n.show()
+
+n.test(
+  accept = ['ab', 'aa', 'abbbbba', 'abbbb'],
+  reject = ['a']
+)
+
 ```
 
 **Problem 7** (20 points) 1.18 Give regular expressions generating the
