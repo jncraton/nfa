@@ -60,7 +60,7 @@ class NFA:
     Returns a set of next states for a given current state and input
     """
 
-    return [i[2] for i in self.transitions if i[0] == current and i[1] == input]
+    return sorted([i[2] for i in self.transitions if i[0] == current and i[1] == input])
 
   def accept(self, input, state=None):
     """
@@ -176,18 +176,31 @@ class NFA:
     """
     Convert NFA to DFA in place
 
-    TODO: Right now this only prunes obvious reflexive transitions
-    and doesn't create a truly minized DFA
     >>> a = NFA([('0a','a','1a'),('0a','ba','0a'),('1a','ab','1a')])
+    >>> a.test(['aba','a'],['b','bbb'])
     >>> a.to_dfa()
-    >>> len(a.transitions)
-    4
+    >>> a.test(['aba','a'],['b','bbb'])
     """
-    
-    self.transitions = [t for t in self.transitions 
-      if t[0] != t[2] or # Non-reflexive transitions
-      len(self.δ(t[0], t[1])) == 1
-    ]
+
+    for q in self.Q:
+      for i in self.Σ:
+        if len(self.δ(q,i)) > 1:
+          states = self.δ(q,i)
+          state = "{%s}" % ','.join(states)
+
+          self.transitions = set(self.transitions)
+
+          self.transitions.update(set([(state if t[0] in states else t[0],t[1],t[2]) for t in self.transitions]))
+
+          # Move transition targets to new state
+          self.transitions = set([(t[0],t[1],state if t[0] == q and t[1] == i else t[2]) for t in self.transitions])
+
+          # Copy accept state
+          for s in states:
+            if s in self.F:
+              self.F.add(state)
+
+          return self.to_dfa()
 
   def ε_elimination(self):
     """
