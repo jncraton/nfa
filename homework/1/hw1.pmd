@@ -70,9 +70,9 @@ discussed in footnote 3 (page 46) to give the state diagram of a DFA for the lan
 
 a. {w| w has at least three a’s and at least two b’s}
 
-DFA to recognize at least 3 a's:
-
 From here on, I'll be using the Python class that I have built to work with DFAs from problem 9. The full source is available there.
+
+DFA to recognize at least 3 a's:
 
 ```{python, source='nfa.py', echo=False}
 ```
@@ -83,9 +83,9 @@ a = DFA([
   ('0a', 'b', '0a'),
   ('1a', 'a', '2a'),
   ('1a', 'b', '1a'),
-  ('2a', 'a', '3a'),
+  ('2a', 'a', '>2a'),
   ('2a', 'b', '2a'),
-  ('3a', 'ab', '3a'),
+  ('>2a', 'ab', '>2a'),
 ])
 
 a.test(
@@ -106,9 +106,9 @@ DFA to recognize at least 2 b's:
 b = DFA([
   ('0b', 'b', '1b'),
   ('0b', 'a', '0b'),
-  ('1b', 'b', '2b'),
+  ('1b', 'b', '>1b'),
   ('1b', 'a', '1b'),
-  ('2b', 'ab', '2b'),
+  ('>1b', 'ab', '>1b'),
 ])
 
 b.test(
@@ -126,7 +126,9 @@ And again in JFLAP:
 Combined DFA:
 
 ```python
-u = DFA.union(a,b)
+u = NFA.union(a,b)
+
+# My union implementation actually creates an NFA, so we need to convert it
 u.to_dfa()
 
 u.test(
@@ -140,13 +142,37 @@ b. {w| w has exactly two a’s and at least two b’s}
 
 DFA to recognize exactly 2 a's:
 
-![](3b1.png)
+```python
+a = DFA([
+  ('0a', 'a', '1a'),
+  ('0a', 'b', '0a'),
+  ('1a', 'a', '2a'),
+  ('1a', 'b', '1a'),
+  ('2a', 'a', '>2a'),
+  ('2a', 'b', '2a'),
+  ('>2a', 'ab', '>2a'),
+], F = ['2a'])
 
-DFA to recognize at least 2 b's (same as part a):
+a.test(
+  accept = ['aa', 'aba', 'bbbbabbba'],
+  reject = ['a', 'b', 'abababab', 'aaa']
+)
 
-![](3a2.png)
+a.show()
+```
 
-Combined DFA:
+Combined DFA (reusing the DFA to recognize at least 2 b's from part a):
+
+```python
+u = NFA.union(a,b)
+u.to_dfa()
+
+u.test(
+  accept = ['aabb', 'bbbbbabbabbb', 'ababbb'],
+  reject = ['aab', 'bba', 'bbaaaa', 'bbbbbaaaaa']
+)
+u.show()
+```
 
 **Problem 4** (10 points) 1.6 Give state diagrams of DFAs recognizing
 the following languages. In all parts, the alphabet is {0,1}.

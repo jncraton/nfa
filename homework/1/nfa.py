@@ -215,15 +215,15 @@ class NFA:
 
     for at in a.transitions:
       for bq in b.Q:
-        transitions.append(("%s-%s" % (at[0], bq), at[1], "%s-%s" % (at[2], bq)))
+        transitions.append(("{%s,%s}" % (at[0], bq), at[1], "{%s,%s}" % (at[2], bq)))
 
     for bt in b.transitions:
       for aq in a.Q:
-        transitions.append(("%s-%s" % (aq, bt[0]), bt[1], "%s-%s" % (aq, bt[2])))
+        transitions.append(("{%s,%s}" % (aq, bt[0]), bt[1], "{%s,%s}" % (aq, bt[2])))
 
-    F = set(['%s-%s' % (af, bf) for af in a.F for bf in b.F])
+    F = set(["{%s,%s}" % (af, bf) for af in a.F for bf in b.F])
     
-    return cls(transitions, F, "%s-%s" % (a.q0, b.q0))
+    return cls(transitions, F, "{%s,%s}" % (a.q0, b.q0))
 
   @classmethod
   def email_validator(cls):
