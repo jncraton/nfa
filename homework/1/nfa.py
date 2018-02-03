@@ -174,10 +174,10 @@ class NFA:
 
   def to_dfa(self):
     """
-    Convert the NFA to a DFA in place
+    Convert NFA to DFA in place
 
     TODO: Right now this only prunes obvious reflexive transitions
-    and doesn't actually convert a complex DFA to an NFA
+    and doesn't create a truly minized DFA
     >>> a = NFA([('0a','a','1a'),('0a','ba','0a'),('1a','ab','1a')])
     >>> a.to_dfa()
     >>> len(a.transitions)
@@ -189,10 +189,50 @@ class NFA:
       len(self.δ(t[0], t[1])) == 1
     ]
 
+  def ε_elimination(self):
+    """
+    Removes any ε (empty string) transitions from the NFA
+
+    ε doesn't the power of an NFA, but can be a useful conveinience.
+
+    >>> n = NFA([(0,'a',1),(0,'ba',0),(1,'ab',1),(0,'ε',1),(1,'b',2)])
+    >>> d = NFA.ε_elimination(n)
+    >>> len(n.transitions)
+    3
+    >>> n.test(['b','aaab','ababababb'], ['a','ababababa','aaaaa'])
+    """
+
+    # Add transitions shared across ε transition
+    for t in set(self.transitions):
+      if t[1] == 'ε':
+        us = t[0]
+        them = t[2]
+            
+        # Follow the transition and add their external transitions to us
+        self.transitions += [(us,t[1],t[2]) for t in self.transitions if t[0] == them]
+
+        # Remove the ε transition
+        self.transitions.remove(t)
+
+        # Remove transitions coming from them
+        self.transitions = [t for t in self.transitions if t[0] != them]
+
+        # Rewrite all other transitions to point to us instead of them
+        self.transitions = set([(t[0],t[1],us if t[2] == them else t[2]) for t in self.transitions])
+
+        # Inherit their other properties
+        self.q0 = us if self.q0 == them else self.q0
+        
+        if them in self.F:
+          self.F.remove(them)
+          self.F.add(us)
+
+        return self.ε_elimination()
+
   @classmethod
   def union(cls, a, b):
     """
-    Merges two FAs and returns their union
+    Merges two FAs and return their union
     
     >>> a = NFA([('0a','a','1a'),('0a','b','0a'),('1a','ab','1a')])
     >>> b = NFA([('0b','b','1b'),('0b','a','0b'),('1b','ab','1b')])

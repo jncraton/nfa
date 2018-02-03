@@ -174,7 +174,7 @@ u.test(
 u.show()
 ```
 
-**Problem 4** (10 points) Give state diagrams of DFAs recognizing
+## Problem 4 (10 points) Give state diagrams of DFAs recognizing
 the following languages. In all parts, the alphabet is {0,1}.
 
 a.  {w| w begins with a 1 and ends with a 0}
@@ -217,9 +217,9 @@ a.test(
 )
 ```
 
-**Problem 5** (10 points) Give state diagrams of NFAs with the
-specified number of states recognizing each of the following languages.
-In all parts, the alphabet is {0,1}.
+## Problem 5 (10 points)
+
+Give state diagrams of NFAs with the specified number of states recognizing each of the following languages. In all parts, the alphabet is {0,1}.
 
 a\. The language {w| w ends with 00} with three states
 
@@ -243,11 +243,33 @@ a.test(
 
 This NFA is also a DFA.
 
-**Problem 6** (10 points) Use the construction given in Theorem
+## Problem 6 (10 points)
+
+Use the construction given in Theorem
 1.39 to convert the following nondeterministic finite automata to
 equivalent deterministic finite automata.
 
 ![](./media/rId6.png)
+
+First, let's build that NFA.
+
+```python
+a = NFA([
+  ('1', 'ε', '2'),
+  ('2', 'a', '1'),
+  ('1', 'a', '3'),
+  ('3', 'b', '3'),
+  ('3', 'ab', '2'),
+])
+
+a.test(
+  accept = ['ab', 'aa', 'abbbbba', 'abbbb'],
+  reject = []
+)
+
+a.to_dfa()
+a.show()
+```
 
 **Problem 7** (20 points) 1.18 Give regular expressions generating the
 following languages. In all parts the alphabet is {0, 1}
