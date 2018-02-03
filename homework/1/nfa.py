@@ -152,8 +152,8 @@ class NFA:
       g.node(state)
       
     for e in self.transitions:
-      g.attr('edge', style='bold')
-      g.attr('edge', color=GREEN)
+      #g.attr('edge', style='bold')
+      g.attr('edge', color=BASE01)
       g.attr('edge', fontcolor=BASE01)
       g.edge(e[0], e[2], e[1])
     
