@@ -74,7 +74,7 @@ DFA to recognize at least 3 a's:
 
 From here on, I'll be using the Python class that I have built to work with DFAs from problem 9. The full source is available there.
 
-```{python, source='dfa.py', echo=False}
+```{python, source='nfa.py', echo=False}
 ```
 
 ```python
@@ -226,7 +226,7 @@ height="3.6786275153105863in"}
     file to show how to compile your program, how to run your program,
     and some testing results you have.
 
-```{python, source='dfa.py', evaluate=False}
+```{python, source='nfa.py', evaluate=False}
 ```
 
 

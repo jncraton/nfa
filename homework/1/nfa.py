@@ -23,9 +23,12 @@ GREEN = '#859900'
 
 ACCENTS = [YELLOW, ORANGE, VIOLET, RED, BLUE, MAGENTA, CYAN, GREEN]
 
-class DFA:
+class NFA:
   """
-  Implements a Deterministic Finite Automaton
+  Implements a Finite Automaton
+
+  This technically implements an NFA, but it can used for DFAs as well
+  because a DFA is just a special of an NFA in terms of implementation
   """
   
   def __init__(self, transitions, F=None, q0=None):
@@ -42,7 +45,7 @@ class DFA:
     An optional set of accept states may be provided. If omitted, the
     last state listed is assumed to be the one and only accept state.
 
-    >>> dfa = DFA([('q0','b','q0'),('q0','a','q1')])
+    >>> dfa = NFA([('q0','b','q0'),('q0','a','q1')])
     >>> dfa.accept('a')
     True
     >>> dfa.accept('bba')
@@ -118,7 +121,7 @@ class DFA:
     
     I do not expect any bonus points for the readability of this method.
     
-    >>> ev = DFA.email_validator()
+    >>> ev = NFA.email_validator()
     >>> len(ev.to_xml())
     19339
     """
@@ -171,7 +174,7 @@ class DFA:
 
     Returns nothing, but raises an AssertionError on failure.
 
-    >>> dfa = DFA([('q0','a','q0'),('q0','b','q1'),('q1','ab','q1')])
+    >>> dfa = NFA([('q0','a','q0'),('q0','b','q1'),('q1','ab','q1')])
     >>> dfa.test(accept=['b','ba','ab'],reject=['a','aaa'])
     """
     
@@ -183,11 +186,11 @@ class DFA:
 
   def to_dfa(self):
     """
-    Convert the NFA to a DFA
+    Convert the NFA to a DFA in place
 
     TODO: Right now this only prunes obvious reflexive transitions
     and doesn't actually convert a complex DFA to an NFA
-    >>> a = DFA([('0a','a','1a'),('0a','ba','0a'),('1a','ab','1a')])
+    >>> a = NFA([('0a','a','1a'),('0a','ba','0a'),('1a','ab','1a')])
     >>> a.to_dfa()
     >>> len(a.transitions)
     4
@@ -203,9 +206,9 @@ class DFA:
     """
     Merges two FAs and returns their union
     
-    >>> a = DFA([('0a','a','1a'),('0a','b','0a'),('1a','ab','1a')])
-    >>> b = DFA([('0b','b','1b'),('0b','a','0b'),('1b','ab','1b')])
-    >>> u = DFA.union(a, b)
+    >>> a = NFA([('0a','a','1a'),('0a','b','0a'),('1a','ab','1a')])
+    >>> b = NFA([('0b','b','1b'),('0b','a','0b'),('1b','ab','1b')])
+    >>> u = NFA.union(a, b)
     >>> u.test(accept=['bba','ba','ab'],reject=['aa','bb','a','b'])
     """
     transitions = []
@@ -227,7 +230,7 @@ class DFA:
     """
     Builds a DFA instance that operates as a simple email address validator.
     
-    >>> ev = DFA.email_validator()
+    >>> ev = NFA.email_validator()
     >>> ev.accept('abc@dsu.edu')
     True
     >>> ev.accept('abc@pluto.dsu.edu')
@@ -257,3 +260,4 @@ class DFA:
       ('tld length 3', '.', 'tld length 0'),
     ], ['tld length 2', 'tld length 3'])
 
+DFA = NFA
