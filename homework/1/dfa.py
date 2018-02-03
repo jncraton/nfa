@@ -62,7 +62,7 @@ class DFA:
     # This could just use a dict for DFAs, but that doesn't work for NFAs
     # We store the set of all transitions, and implement a method δ
     # to return the set of next states
-    self.transitions = [(i[0], char, i[2]) for i in transitions for char in i[1]]
+    self.transitions = [(i[0], char, i[2]) for i in set(transitions) for char in i[1]]
 
     # Start state q0
     self.q0 = q0 or transitions[0][0]
