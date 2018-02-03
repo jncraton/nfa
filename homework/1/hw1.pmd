@@ -78,22 +78,22 @@ From here on, I'll be using the Python class that I have built to work with DFAs
 ```
 
 ```python
-dfa = DFA([
-  ('start', 'a', 'one a'),
-  ('start', 'b', 'start'),
-  ('one a', 'a', 'two a'),
-  ('one a', 'b', 'one a'),
-  ('two a', 'a', 'three a'),
-  ('two a', 'b', 'two a'),
-  ('three a', 'ab', 'three a'),
+a = DFA([
+  ('0a', 'a', '1a'),
+  ('0a', 'b', '0a'),
+  ('1a', 'a', '2a'),
+  ('1a', 'b', '1a'),
+  ('2a', 'a', '3a'),
+  ('2a', 'b', '2a'),
+  ('3a', 'ab', '3a'),
 ])
 
-dfa.test(
+a.test(
   accept = ['abababa', 'aaa', 'baaab'],
   reject = ['bbbbbab', 'aa', 'abbba']
 )
 
-dfa.show()
+a.show()
 ```
 
 Here's the same DFA in JFLAP just to demonstrate that I understand how to use JFLAP:
@@ -103,20 +103,20 @@ Here's the same DFA in JFLAP just to demonstrate that I understand how to use JF
 DFA to recognize at least 2 b's:
 
 ```python
-dfa = DFA([
-  ('start', 'b', 'one b'),
-  ('start', 'a', 'start'),
-  ('one b', 'b', 'two b'),
-  ('one b', 'a', 'one b'),
-  ('two b', 'ab', 'two b'),
+b = DFA([
+  ('0b', 'b', '1b'),
+  ('0b', 'a', '0b'),
+  ('1b', 'b', '2b'),
+  ('1b', 'a', '1b'),
+  ('2b', 'ab', '2b'),
 ])
 
-dfa.test(
+b.test(
   accept = ['bb', 'bbaa', 'abbaba'],
   reject = ['aaaaaba', 'b', 'aaab']
 )
 
-dfa.show()
+b.show()
 ```
 
 And again in JFLAP:
@@ -125,7 +125,15 @@ And again in JFLAP:
 
 Combined DFA:
 
+```python
+a.union(b)
 
+a.test(
+  accept = ['aaabb', 'bbaaa', 'ababababab'],
+  reject = ['aabb', 'b', 'aaab', 'a']
+)
+a.show()
+```
 
 b. {w| w has exactly two a’s and at least two b’s}
 

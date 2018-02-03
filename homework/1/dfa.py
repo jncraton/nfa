@@ -176,17 +176,17 @@ class DFA:
     """
     
     for a in accept:
-      assert(self.accept(a))
+      assert self.accept(a), "Failed to accept %s" % a
 
     for r in reject:
-      assert(self.accept(r) == False)
+      assert self.accept(r) == False, "Failed to reject %s" % r
 
   def union(self, b):
     """
     Merges another DFA as a union to this one
     
-    >>> a = DFA([('q0','a','q0'),('q0','b','q1')])
-    >>> b = DFA([('q0','b','q0'),('q0','a','q1')])
+    >>> a = DFA([('0a','a','1a'),('0a','b','0a'),('1a','ab','1a')])
+    >>> b = DFA([('0b','b','1b'),('0b','a','0b'),('1b','ab','1b')])
     >>> a.union(b)
     >>> a.test(accept=['bba','ba','ab'],reject=['aa','bb','a','b'])
     """
@@ -197,7 +197,7 @@ class DFA:
         transitions.append(("%s-%s" % (t[0], bq), t[1], "%s-%s" % (t[2], bq)))
 
     for bt in b.transitions:
-      for q in b.Q:
+      for q in self.Q:
         transitions.append(("%s-%s" % (q, bt[0]), bt[1], "%s-%s" % (q, bt[2])))
 
     self.transitions = set(transitions)
