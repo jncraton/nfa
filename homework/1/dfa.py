@@ -58,8 +58,10 @@ class DFA:
     self.Σ = set(sum([[c for c in i[1]] for i in transitions], []))
 
     # Transition function relating state and symbol to another state 
-    # δ: Q × Σ → Q
+    # δ: Q × Σ → P(Q)
     # This could just use a dict for DFAs, but that doesn't work for NFAs
+    # We store the set of all transitions, and implement a method δ
+    # to return the set of next states
     self.transitions = [(i[0], char, i[2]) for i in transitions for char in i[1]]
 
     # Start state q0
