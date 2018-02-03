@@ -28,7 +28,7 @@ class DFA:
   Implements a Deterministic Finite Automaton
   """
   
-  def __init__(self, transitions, accept=None):
+  def __init__(self, transitions, F=None, q0=None):
     """
     The DFA is constructed by a list of transitions of the form
             [
@@ -65,10 +65,10 @@ class DFA:
     self.transitions = [(i[0], char, i[2]) for i in transitions for char in i[1]]
 
     # Start state q0
-    self.q0 = transitions[0][0]
+    self.q0 = q0 or transitions[0][0]
     
     # Accept states F
-    self.F = accept or (transitions[-1][2],)
+    self.F = F or (transitions[-1][2],)
 
   def δ(self, current, input):
     """
@@ -181,30 +181,29 @@ class DFA:
     for r in reject:
       assert self.accept(r) == False, "Failed to reject %s" % r
 
-  def union(self, b):
+  @classmethod
+  def union(cls, a, b):
     """
-    Merges another DFA as a union to this one
+    Merges two FAs and returns their union
     
     >>> a = DFA([('0a','a','1a'),('0a','b','0a'),('1a','ab','1a')])
     >>> b = DFA([('0b','b','1b'),('0b','a','0b'),('1b','ab','1b')])
-    >>> a.union(b)
-    >>> a.test(accept=['bba','ba','ab'],reject=['aa','bb','a','b'])
+    >>> u = DFA.union(a, b)
+    >>> u.test(accept=['bba','ba','ab'],reject=['aa','bb','a','b'])
     """
     transitions = []
 
-    for t in self.transitions:
+    for at in a.transitions:
       for bq in b.Q:
-        transitions.append(("%s-%s" % (t[0], bq), t[1], "%s-%s" % (t[2], bq)))
+        transitions.append(("%s-%s" % (at[0], bq), at[1], "%s-%s" % (at[2], bq)))
 
     for bt in b.transitions:
-      for q in self.Q:
-        transitions.append(("%s-%s" % (q, bt[0]), bt[1], "%s-%s" % (q, bt[2])))
+      for aq in a.Q:
+        transitions.append(("%s-%s" % (aq, bt[0]), bt[1], "%s-%s" % (aq, bt[2])))
 
-    self.transitions = set(transitions)
-
-    self.F = set(['%s-%s' % (af, bf) for af in self.F for bf in b.F])
-    self.Q = set(['%s-%s' % (aq, bq) for aq in self.Q for bq in b.Q])
-    self.q0 = '%s-%s' % (self.q0, b.q0)
+    F = set(['%s-%s' % (af, bf) for af in a.F for bf in b.F])
+    
+    return cls(transitions, F, "%s-%s" % (a.q0, b.q0))
 
   @classmethod
   def email_validator(cls):

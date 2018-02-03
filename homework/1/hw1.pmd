@@ -126,13 +126,13 @@ And again in JFLAP:
 Combined DFA:
 
 ```python
-a.union(b)
+u = DFA.union(a,b)
 
-a.test(
+u.test(
   accept = ['aaabb', 'bbaaa', 'ababababab'],
   reject = ['aabb', 'b', 'aaab', 'a']
 )
-a.show()
+u.show()
 ```
 
 b. {w| w has exactly two a’s and at least two b’s}
