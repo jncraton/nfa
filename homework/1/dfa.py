@@ -59,14 +59,23 @@ class DFA:
 
     # Transition function relating state and symbol to another state 
     # δ: Q × Σ → Q
-    self.δ = dict(ChainMap(*[{(i[0], char): i[2] for char in i[1]} for i in transitions]))
+    # This could just use a dict for DFAs, but that doesn't work for NFAs
+    self.transitions = [(i[0], char, i[2]) for i in transitions for char in i[1]]
 
     # Start state q0
     self.q0 = transitions[0][0]
     
     # Accept states F
-    self.F = accept or transitions[-1][2]
+    self.F = accept or (transitions[-1][2],)
 
+  def δ(self, current, input):
+    """
+    Transition functions δ
+
+    Returns a set of next states for a given current state and input
+    """
+
+    return [i[2] for i in self.transitions if i[0] == current and i[1] == input]
 
   def accept(self, input, state=None):
     """
@@ -74,22 +83,32 @@ class DFA:
   
     Returns True when halted at a state in F, and False otherwise
     """
-    
+
     # Begin at the start state if we aren't called with a state
     state = state or self.q0
-  
+
     # Return our acceptance status when we're out of input
     if len(input) == 0:
       return state in self.F
   
     # Get the next state or return our acceptance status if we're stuck
     try:
-      next = self.δ[(state,input[0])]
+      next = self.δ(state,input[0])
     except KeyError:
       return state in self.F
   
-    # Recurse using our next state and the rest of our input
-    return self.accept(input[1:], next)
+    # Recurse using all possible next states and the rest of our input
+    #
+    # It's worth noting that the search walk for an NFA take exponential
+    # time, while the conversion to DFA would include an exponential
+    # number of states. It's a time/memory tradeoff.
+    for n in next:
+      a = self.accept(input[1:], n)
+      # We accept if any path results in acceptance
+      if a:
+        return True
+
+    return False
     
   def to_xml(self):
     """
@@ -111,32 +130,11 @@ class DFA:
         for name in self.Q
       ] + [
         '<transition><from>%d</from><to>%d</to><read>%s</read></transition>' % 
-        ( ids[t[0][0]], ids[t[1]], t[0][1] ) 
-        for t in self.δ.items()
+        ( ids[t[0]], ids[t[2]], t[1] ) 
+        for t in self.transitions
       ] + 
       ['</automaton></structure>']
     )
-
-  def transitions(self):
-    """ 
-    Flattens transitions 
-
-    >>> dfa = DFA([('q0','abc','q0'),('q0','def','q0')])
-    >>> dfa.transitions()
-    [('q0', 'abcdef', 'q0')]
-    """
-
-    flat = []
-
-    for t in self.δ.items():
-      match = [i for i in flat if i[0] == t[0] and i[2] == t[2] and i[1] in t[1]]
-
-      if match:
-        match[1] += t[1]
-      else:
-        flat.append(t)
-    #return flat
-    return [('q0', 'abcdef', 'q0')]
 
   def to_graphviz(self):
     g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph', 'bgcolor': BASE3, 'overlap': 'scale', 'concentrate': 'true', 'splines':'true'})
@@ -148,11 +146,11 @@ class DFA:
       g.attr('node', fontcolor=BASE01)
       g.node(state)
       
-    for e in self.δ.items():
+    for e in self.transitions:
       g.attr('edge', style='bold')
       g.attr('edge', color=GREEN)
       g.attr('edge', fontcolor=BASE01)
-      g.edge(e[0][0], e[1], e[0][1])
+      g.edge(e[0], e[2], e[1])
     
     # Add arrow to start state
     g.attr('node', shape='none')
@@ -171,7 +169,7 @@ class DFA:
 
     Returns nothing, but raises an AssertionError on failure.
 
-    >>> dfa = DFA([('q0','a','q0'),('q0','b','q1')])
+    >>> dfa = DFA([('q0','a','q0'),('q0','b','q1'),('q1','ab','q1')])
     >>> dfa.test(accept=['b','ba','ab'],reject=['a','aaa'])
     """
     
@@ -180,6 +178,31 @@ class DFA:
 
     for r in reject:
       assert(self.accept(r) == False)
+
+  def union(self, b):
+    """
+    Merges another DFA as a union to this one
+    
+    >>> a = DFA([('q0','a','q0'),('q0','b','q1')])
+    >>> b = DFA([('q0','b','q0'),('q0','a','q1')])
+    >>> a.union(b)
+    >>> a.test(accept=['bba','ba','ab'],reject=['aa','bb','a','b'])
+    """
+    transitions = []
+
+    for t in self.transitions:
+      for bq in b.Q:
+        transitions.append(("%s-%s" % (t[0], bq), t[1], "%s-%s" % (t[2], bq)))
+
+    for bt in b.transitions:
+      for q in b.Q:
+        transitions.append(("%s-%s" % (q, bt[0]), bt[1], "%s-%s" % (q, bt[2])))
+
+    self.transitions = set(transitions)
+
+    self.F = set(['%s-%s' % (af, bf) for af in self.F for bf in b.F])
+    self.Q = set(['%s-%s' % (aq, bq) for aq in self.Q for bq in b.Q])
+    self.q0 = '%s-%s' % (self.q0, b.q0)
 
   @classmethod
   def email_validator(cls):
