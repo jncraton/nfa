@@ -119,13 +119,15 @@ dfa.test(
 dfa.show()
 ```
 
-And again in from JFLAP:
+And again in JFLAP:
 
 ![](3a2.png)
 
 Combined DFA:
 
-b\. {w| w has exactly two a’s and at least two b’s}
+
+
+b. {w| w has exactly two a’s and at least two b’s}
 
 DFA to recognize exactly 2 a's:
 
