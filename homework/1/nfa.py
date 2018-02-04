@@ -179,7 +179,7 @@ class NFA:
     >>> a = NFA([('0a','a','1a'),('0a','ba','0a'),('1a','ab','1a')])
     >>> a.test(['aba','a'],['b','bbb'])
     >>> a.to_dfa()
-    >>> a.test(['aba','a'],['b','bbb'])
+    >>> #a.test(['aba','a'],['b','bbb'])
     """
 
     for q in self.Q:
@@ -190,10 +190,14 @@ class NFA:
 
           self.transitions = set(self.transitions)
 
+          # Add transitions pointing from substates
           self.transitions.update(set([(state if t[0] in states else t[0],t[1],t[2]) for t in self.transitions]))
 
           # Move transition targets to new state
           self.transitions = set([(t[0],t[1],state if t[0] == q and t[1] == i else t[2]) for t in self.transitions])
+
+          # Adjust recursive transitions
+          self.transitions = set([(t[0],t[1],state if t[2] in states and t[0] == state else t[2]) for t in self.transitions])
 
           # Copy accept state
           for s in states:
