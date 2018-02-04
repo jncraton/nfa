@@ -88,12 +88,12 @@ a = DFA([
   ('>2a', 'ab', '>2a'),
 ])
 
+a.show()
+
 a.test(
   accept = ['abababa', 'aaa', 'baaab'],
   reject = ['bbbbbab', 'aa', 'abbba']
 )
-
-a.show()
 ```
 
 Here's the same DFA in JFLAP just to demonstrate that I understand how to use JFLAP:
@@ -111,12 +111,12 @@ b = DFA([
   ('>1b', 'ab', '>1b'),
 ])
 
+b.show()
+
 b.test(
   accept = ['bb', 'bbaa', 'abbaba'],
   reject = ['aaaaaba', 'b', 'aaab']
 )
-
-b.show()
 ```
 
 And again in JFLAP:
@@ -131,11 +131,12 @@ u = NFA.union(a,b)
 # My union implementation actually creates an NFA, so we need to convert it
 u.to_dfa()
 
+u.show()
+
 u.test(
   accept = ['aaabb', 'bbaaa', 'ababababab'],
   reject = ['aabb', 'b', 'aaab', 'a']
 )
-u.show()
 ```
 
 b. {w| w has exactly two a’s and at least two b’s}
@@ -153,12 +154,12 @@ a = DFA([
   ('>2a', 'ab', '>2a'),
 ], F = ['2a'])
 
+a.show()
+
 a.test(
   accept = ['aa', 'aba', 'bbbbabbba'],
   reject = ['a', 'b', 'abababab', 'aaa']
 )
-
-a.show()
 ```
 
 Combined DFA (reusing the DFA to recognize at least 2 b's from part a):
@@ -167,11 +168,12 @@ Combined DFA (reusing the DFA to recognize at least 2 b's from part a):
 u = NFA.union(a,b)
 u.to_dfa()
 
+u.show()
+
 u.test(
   accept = ['aabb', 'bbbbbabbabbb', 'ababbb'],
   reject = ['aab', 'bba', 'bbaaaa', 'bbbbbaaaaa']
 )
-u.show()
 ```
 
 ## Problem 4 (10 points)
