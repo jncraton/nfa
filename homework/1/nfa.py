@@ -270,7 +270,15 @@ class NFA:
 
     F = set(["{%s,%s}" % (af, bf) for af in a.F for bf in b.F])
     
-    return cls(transitions, F, "{%s,%s}" % (a.q0, b.q0))
+    u = cls(transitions, F, "{%s,%s}" % (a.q0, b.q0))
+
+    # Prune reflexive transitions that add no information
+    u.transitions = [t for t in u.transitions 
+      if t[0] != t[2] or # Non-reflexive transitions
+      len(u.δ(t[0], t[1])) == 1
+    ]
+
+    return u
 
   @classmethod
   def email_validator(cls):
