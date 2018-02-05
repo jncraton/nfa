@@ -299,8 +299,9 @@ n.test(
 
 ```
 
-**Problem 7** (20 points) 1.18 Give regular expressions generating the
-following languages. In all parts the alphabet is {0, 1}
+## Problem 7 (20 points) 
+
+Give regular expressions generating the following languages. In all parts the alphabet is {0, 1}
 
 a.  {w | w has at least one 1}
 
@@ -310,9 +311,9 @@ c.  {w | |w| &lt; 5}
 
 d.  {w | every 3rd position of w is 1}
 
-**Problem 8** (10 points) 1.19 Use the procedure described in Lemma 1.55
-to convert the following regular expressions to nondeterministic finite
-automata.
+## Problem 8 (10 points)
+
+Use the procedure described in Lemma 1.55 to convert the following regular expressions to nondeterministic finite automata.
 
 a\. (01)\*000(01)\*
 
