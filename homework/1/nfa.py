@@ -283,6 +283,39 @@ class NFA:
     return u
 
   @classmethod
+  def concat(cls, a, b):
+    """
+    Merges two FAs and return their concatenation
+    
+    >>> a = NFA([('0a','a','1a')])
+    >>> b = NFA([('0b','b','1b')])
+    >>> c = NFA.concat(a, b)
+    >>> c.test(accept=['ab'],reject=['a','b'])
+    >>> a = NFA([('0a','a','1a'),('1a','a','2a')])
+    >>> b = NFA([('0b','b','1b')])
+    >>> c = NFA.concat(a, b)
+    >>> c.test(accept=['aab'],reject=['a','b'])
+    >>> a = NFA([('0a','a','1a'),('0a','b','1b')],F=['1a','1b'])
+    >>> b = NFA([('0c','c','1c')])
+    >>> c = NFA.concat(a, b)
+    >>> c.test(accept=['ac','bc'],reject=['a','b','cc'])
+    """
+    transitions = []
+
+    transitions += [('a'+t[0], t[1], 'a'+t[2]) for t in a.transitions]
+    F = []
+
+    # Every accept state in a becomes a copy of b
+    for f in a.F:
+      f = 'a' + f
+      transitions += [(f+'b'+t[0] if t[0] != b.q0 else f, t[1], f+'b'+t[2] if t[2] != b.q0 else f) for t in b.transitions]
+
+      # Accept states are accept states of b
+      F += [f+'b'+s for s in b.F]
+
+    return cls(transitions, F=F, q0='a'+a.q0)
+
+  @classmethod
   def from_re(cls, re):
     """
     Builds an NFA instance from a regular expression
