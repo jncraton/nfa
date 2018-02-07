@@ -126,9 +126,9 @@ And again in JFLAP:
 Combined DFA:
 
 ```python
-u = NFA.union(a,b)
+u = NFA.intersection(a,b)
 
-# My union implementation actually creates an NFA, so we need to convert it
+# My insection implementation actually creates an NFA, so we need to convert it
 u.to_dfa()
 
 u.show()
@@ -165,7 +165,7 @@ a.test(
 Combined DFA (reusing the DFA to recognize at least 2 b's from part a):
 
 ```python
-u = NFA.union(a,b)
+u = NFA.intersection(a,b)
 u.to_dfa()
 
 u.show()

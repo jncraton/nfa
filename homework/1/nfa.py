@@ -55,14 +55,17 @@ class NFA:
     # Accept states F
     self.F = F or set([transitions[-1][2]])
 
-  def δ(self, current, input):
+  def δ(self, current, input=None):
     """
     Transition functions δ
 
     Returns a set of next states for a given current state and input
     """
 
-    return sorted([i[2] for i in self.transitions if i[0] == current and i[1] == input])
+    if input:
+      return sorted([i[2] for i in self.transitions if i[0] == current and i[1] == input])
+    else:
+      return sorted([i[2] for i in self.transitions if i[0] == current and i[1] == 'ε'])
 
   def accept(self, input, state=None):
     """
@@ -77,7 +80,7 @@ class NFA:
     # Return our acceptance status when we're out of input
     if len(input) == 0:
       return state in self.F
-  
+
     # Get the next state or return our acceptance status if we're stuck
     try:
       next = self.δ(state,input[0])
@@ -92,6 +95,12 @@ class NFA:
     for n in next:
       a = self.accept(input[1:], n)
       # We accept if any path results in acceptance
+      if a:
+        return True
+
+    # Handle epsilon case
+    for n in self.δ(state,input=None):
+      a = self.accept(input, n)
       if a:
         return True
 
@@ -169,10 +178,10 @@ class NFA:
     """
     
     for a in accept:
-      assert self.accept(a), "Failed to accept %s for %s" % (a, self.transitions)
+      assert self.accept(a), "Failed to accept %s for %s" % (a, sorted(list(self.transitions)))
 
     for r in reject:
-      assert self.accept(r) == False, "Failed to reject %s for %s" % (r, self.transitions)
+      assert self.accept(r) == False, "Failed to reject %s for %s" % (r, sorted(list(self.transitions)))
 
   def to_dfa(self):
     """
@@ -251,13 +260,15 @@ class NFA:
         return self.ε_elimination()
 
   @classmethod
-  def union(cls, a, b):
+  def intersection(cls, a, b):
     """
-    Merges two FAs and return their union
+    Merges two FAs and return their intersection
+
+    In essense, this means both FAs must reach their accept state.
     
     >>> a = NFA([('0a','a','1a'),('0a','b','0a'),('1a','ab','1a')])
     >>> b = NFA([('0b','b','1b'),('0b','a','0b'),('1b','ab','1b')])
-    >>> u = NFA.union(a, b)
+    >>> u = NFA.intersection(a, b)
     >>> u.test(accept=['bba','ba','ab'],reject=['aa','bb','a','b'])
     """
     transitions = []
@@ -281,6 +292,34 @@ class NFA:
     ]
 
     return u
+
+  @classmethod
+  def union(cls, a, b):
+    """
+    Merges two FAs and return their union
+
+    This means that either FA must reach its accept state
+    
+    >>> a = NFA([('0a','a','1a'),('0a','b','0a'),('1a','ab','1a')])
+    >>> b = NFA([('0b','b','1b'),('0b','a','0b'),('1b','ab','1b')])
+    >>> u = NFA.union(a, b)
+    >>> u.test(accept=['a','b'],reject=[''])
+    """
+
+    # Start with ε transitions to start states
+    transitions = [
+      ('0','ε','a'+a.q0),
+      ('0','ε','b'+b.q0),
+    ]
+
+    # Add all transitions
+    transitions += [('a'+t[0],t[1],'a'+t[2]) for t in a.transitions]
+    transitions += [('b'+t[0],t[1],'b'+t[2]) for t in b.transitions]
+
+    F =  ['a'+f for f in a.F]
+    F += ['b'+f for f in b.F]
+
+    return cls(transitions, F, q0='0')
 
   @classmethod
   def concat(cls, a, b):
@@ -359,32 +398,24 @@ class NFA:
     >>> n = NFA.from_re('a')
     >>> n.test(['a'],['','aa'])
     >>> n = NFA.from_re('ab')
-    >>> n.test(['ab'],['','abc'])
+    >>> n.test(['ab'],['','abc','a'])
     >>> n = NFA.from_re('a+b')
     >>> n.test(['a', 'b'],['','abc', 'ab'])
     """
     
-    def parse(re, transitions = [], op='concat'):
+    def append_re(re, nfa=cls([])):
       """ 
-      Parses one byte of re input and adds to the nfa implementations
+      Concatentates an RE to an NFA
       """
-      ops = ('next', '+', '*')
-      
       if len(re) == 0:
-        return transitions
+        return nfa
 
-      if re[0] not in ['+']:
-        parse.next = str(int(parse.current) + 1)
-        transitions.append((parse.current, re[0], parse.next))
-        parse.current = parse.next
+      if re[0] == '+':
+        return append_re(re[2:], NFA.union(nfa, cls([('0',re[1],'1')])))        
       else:
-        parse.current = str(int(parse.current) - 1)
+        return append_re(re[1:], NFA.concat(nfa, cls([('0',re[0],'1')])))
 
-      return parse(re[1:], transitions)
-
-    parse.current = '0'
-    
-    return cls(parse(re))
+    return append_re(re)
 
   @classmethod
   def email_validator(cls):
