@@ -428,6 +428,8 @@ class NFA:
     >>> n.test(['bc','abc'],['','a', 'b','aa','bbc'])
     >>> n = NFA.from_re('a(b+c)d')
     >>> n.test(['abd','acd'],['','a', 'b','abc'])
+    >>> n = NFA.from_re('a*')
+    >>> n.test(['','a','aaaaa'],[])
     """
     
     def append_re(re, nfa=cls([('0','ε','1')], F=[])):
@@ -458,8 +460,8 @@ class NFA:
       else:
         lhs = cls.from_re(re[0] if re[0] != '!' else 'ε')
 
-      if False:
-        pass
+      if re[1] == '*':
+        return NFA.concat(nfa, lhs)
       else:
         nfa = NFA.concat(nfa, lhs)
         if re[1] == '+':
