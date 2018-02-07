@@ -33,6 +33,8 @@ class NFA:
     >>> dfa.accept('b')
     False
     """
+    if len(transitions) == 0:
+      transitions = [('q0','','q0')]
 
     # Set of states Q
     self.Q = set([i[0] for i in transitions] + [i[2] for i in transitions])
@@ -279,6 +281,36 @@ class NFA:
     ]
 
     return u
+
+  @classmethod
+  def from_re(cls, re):
+    """
+    Builds an NFA instance from a regular expression
+
+    >>> n = NFA.from_re('')
+    >>> n.test([''],['a'])
+    >>> n = NFA.from_re('a')
+    >>> n.test(['a'],['','aa'])
+    >>> n = NFA.from_re('ab')
+    >>> n.test(['ab'],['','abc'])
+    """
+    
+    def parse(re, transitions = []):
+      """ 
+      Parses one byte of re input and adds to the nfa implementations
+      """
+      if len(re) == 0:
+        return transitions
+
+      parse.next = str(int(parse.current) + 1)
+      transitions.append((parse.current, re[0], parse.next))
+      parse.current = parse.next
+
+      return parse(re[1:], transitions)
+
+    parse.current = 0
+    
+    return cls(parse(re))
 
   @classmethod
   def email_validator(cls):
