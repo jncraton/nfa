@@ -401,6 +401,10 @@ class NFA:
     >>> n.test(['ab'],['','abc','a'])
     >>> n = NFA.from_re('a+b')
     >>> n.test(['a', 'b'],['','abc', 'ab'])
+    >>> n = NFA.from_re('(a)b')
+    >>> n.test(['ab'],['','a', 'b'])
+    >>> n = NFA.from_re('(a+b)c')
+    >>> n.test(['ac','bc'],['','a', 'b','aa'])
     """
     
     def append_re(re, nfa=cls([('0','ε','1')], F=[])):
@@ -413,10 +417,28 @@ class NFA:
       if len(re) == 1:
         return cls([('0',re[0],'1')])
 
-      if re[1] == '+':
-        return NFA.union(NFA.concat(nfa, cls.from_re(re[0])), cls.from_re(re[2:]))
+      # Consume the next element. This may be a single char or an
+      # expression wrapped in parens
+      if re[0] == '(':
+        open = 0
+        i = 0
+        while True:
+          if re[i] == '(':
+            open += 1
+          if re[i] == ')':
+            open -= 1
+          i += 1
+          if open == 0 or i > len(re):  
+            break
+        nfa = NFA.concat(nfa, NFA.from_re(re[1:i-1]))
+        re = re[i-1:]
       else:
-        return NFA.concat(NFA.concat(nfa, cls.from_re(re[0])), cls.from_re(re[1:]))
+        nfa = NFA.concat(nfa, cls.from_re(re[0]))
+
+      if re[1] == '+':
+        return NFA.union(nfa, cls.from_re(re[2:]))
+      else:
+        return NFA.concat(nfa, cls.from_re(re[1:]))
 
     return append_re(re)
 
