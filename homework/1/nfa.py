@@ -287,6 +287,40 @@ class NFA:
     """
     Builds an NFA instance from a regular expression
 
+    Regular expressions are of the form recognized by JFLAP
+
+    Some examples:
+
+    a+b+c = {a, b, c}
+    abc = {abc}
+    (!+a)bc = {bc, abc}
+    ab* = {a, ab, abb, abbb, ...}
+    (ab)* = (λ, ab, abab, ababab, ...)
+    (a+b)* = (λ, a, b, aa, ab, ba, bb, aaa, ...)
+    a+b* = (a, λ, b, bb, bbb, ...)
+    a+!* = (a, λ)
+    (a+!)* = (λ, a, aa, aaa, aaaa, ...)
+
+    The parser used here is a stack-based parser. While regular
+    expressions represent a regular language, they are themselves
+    a context-free grammar, so a stack-based parser is required.
+
+    The RE is conceptualized as a string with the following grammar:
+
+    S → ExpOp
+    Exp → a
+    Exp → (a)
+    Op → o
+
+    Where a is a printable character not in o and o is one of:
+
+    - '*' is the Kleene star
+    - '+' is the union operator
+    - '!' is used to represent the empty string
+    - The empty string representing concatination
+
+    '(' and ')' are literal parenthesis.
+    
     >>> n = NFA.from_re('')
     >>> n.test([''],['a'])
     >>> n = NFA.from_re('a')
@@ -297,14 +331,16 @@ class NFA:
     >>> n.test(['a', 'b'],['','abc', 'ab'])
     """
     
-    def parse(re, transitions = []):
+    def parse(re, transitions = [], op='concat'):
       """ 
       Parses one byte of re input and adds to the nfa implementations
       """
+      ops = ('next', '+', '*')
+      
       if len(re) == 0:
         return transitions
 
-      if re[0] not in ['+']:      
+      if re[0] not in ['+']:
         parse.next = str(int(parse.current) + 1)
         transitions.append((parse.current, re[0], parse.next))
         parse.current = parse.next
