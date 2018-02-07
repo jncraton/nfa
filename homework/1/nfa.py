@@ -77,6 +77,12 @@ class NFA:
     # Begin at the start state if we aren't called with a state
     state = state or self.q0
 
+    # Handle epsilon case
+    for n in self.δ(state,input=None):
+      a = self.accept(input, n)
+      if a:
+        return True
+
     # Return our acceptance status when we're out of input
     if len(input) == 0:
       return state in self.F
@@ -95,12 +101,6 @@ class NFA:
     for n in next:
       a = self.accept(input[1:], n)
       # We accept if any path results in acceptance
-      if a:
-        return True
-
-    # Handle epsilon case
-    for n in self.δ(state,input=None):
-      a = self.accept(input, n)
       if a:
         return True
 
@@ -403,17 +403,20 @@ class NFA:
     >>> n.test(['a', 'b'],['','abc', 'ab'])
     """
     
-    def append_re(re, nfa=cls([])):
+    def append_re(re, nfa=cls([('0','ε','1')], F=[])):
       """ 
       Concatentates an RE to an NFA
       """
       if len(re) == 0:
         return nfa
 
-      if re[0] == '+':
-        return append_re(re[2:], NFA.union(nfa, cls([('0',re[1],'1')])))        
+      if len(re) == 1:
+        return cls([('0',re[0],'1')])
+
+      if re[1] == '+':
+        return NFA.union(NFA.concat(nfa, cls.from_re(re[0])), cls.from_re(re[2:]))
       else:
-        return append_re(re[1:], NFA.concat(nfa, cls([('0',re[0],'1')])))
+        return NFA.concat(NFA.concat(nfa, cls.from_re(re[0])), cls.from_re(re[1:]))
 
     return append_re(re)
 
