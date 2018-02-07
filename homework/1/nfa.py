@@ -169,10 +169,10 @@ class NFA:
     """
     
     for a in accept:
-      assert self.accept(a), "Failed to accept %s" % a
+      assert self.accept(a), "Failed to accept %s for %s" % (a, self.transitions)
 
     for r in reject:
-      assert self.accept(r) == False, "Failed to reject %s" % r
+      assert self.accept(r) == False, "Failed to reject %s for %s" % (r, self.transitions)
 
   def to_dfa(self):
     """
@@ -293,6 +293,8 @@ class NFA:
     >>> n.test(['a'],['','aa'])
     >>> n = NFA.from_re('ab')
     >>> n.test(['ab'],['','abc'])
+    >>> n = NFA.from_re('a+b')
+    >>> n.test(['a', 'b'],['','abc', 'ab'])
     """
     
     def parse(re, transitions = []):
@@ -302,13 +304,16 @@ class NFA:
       if len(re) == 0:
         return transitions
 
-      parse.next = str(int(parse.current) + 1)
-      transitions.append((parse.current, re[0], parse.next))
-      parse.current = parse.next
+      if re[0] not in ['+']:      
+        parse.next = str(int(parse.current) + 1)
+        transitions.append((parse.current, re[0], parse.next))
+        parse.current = parse.next
+      else:
+        parse.current = str(int(parse.current) - 1)
 
       return parse(re[1:], transitions)
 
-    parse.current = 0
+    parse.current = '0'
     
     return cls(parse(re))
 
