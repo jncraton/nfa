@@ -105,6 +105,25 @@ class NFA:
         return True
 
     return False
+
+  def rename(self):
+    """ 
+    Shortens state names 
+
+    Some of the other methods concatenate state names for easy debugging,
+    and it can be helpful to shorten them back down.
+
+    >>> n = NFA([('big','a','names')])
+    >>> n.rename()
+    >>> n.transitions
+    [('0', 'a', '1')]
+    """
+
+    ids = {s: str(i) for (i, s) in enumerate(sorted(list(self.Q)))}
+
+    self.transitions = [(ids[t[0]], t[1], ids[t[2]]) for t in self.transitions]
+    self.F = [ids[f] for f in self.F]
+    self.q0 = ids[self.q0]
     
   def to_xml(self):
     """
