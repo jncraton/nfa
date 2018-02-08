@@ -16,7 +16,7 @@ The Cartesian product of A×B represents the set of ordered pairs (u,v) where u 
 
 b. If C is a set with *c* elements, how many elements are in the power set of C?
 
-A power set is the set of all subsets, including the set itself and the empty set. The lenght of the powerset of C can be represented as | P(C) | = 2<sup>c<\sup>.
+A power set is the set of all subsets, including the set itself and the empty set. The lenght of the powerset of C can be represented as | P(C) | = 2<sup>c
 
 c. Let R={(1, 2), (2, 3), (2, 4)} is a relation on the set A = {1, 2, 3, 4}. What is R\* (Reflexive and transitive closure)?
 
