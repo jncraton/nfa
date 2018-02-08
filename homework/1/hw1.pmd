@@ -308,7 +308,6 @@ a.  {w | w has at least one 1}
 `0*1(0+1)*`
 
 ```python
-
 r = NFA.from_re('0*1(0+1)*')
 r.show()
 r.test(['1','01','010','111000101001'],['','0','0000'])
@@ -320,7 +319,6 @@ r.test(['1','01','010','111000101001'],['','0','0000'])
 b.  {w | w starts and ends with same symbol}
 
 ```python
-
 r = NFA.from_re('(0(0+1)*0)+(1(0+1)*1)+0+1')
 r.show()
 r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101010'])
@@ -332,22 +330,33 @@ r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101
 c.  {w | |w| &lt; 5}
 
 ```python
-
-r = NFA.from_re('(0+1)(0+1)(0+1)(0+1)')
-r.show()
-r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101010'])
+r = NFA.from_re('(!+0+1)(!+0+1)(!+0+1)(!+0+1)')
 r.ε_elimination()
 r.show()
-r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101010'])
+r.test(['1','0','11','00','101','010','1111','0000'],['11111','10101'])
 ```
 
 d.  {w | every 3rd position of w is 1}
+
+```python
+r = NFA.from_re('(0+1)(0+1)1((0+1)(0+1)1)*')
+r.ε_elimination()
+r.show()
+r.test(['001','111','001111','001001001001'],['','000','001000','00100100'])
+```
 
 ## Problem 8 (10 points)
 
 Use the procedure described in Lemma 1.55 to convert the following regular expressions to nondeterministic finite automata.
 
 a\. (01)\*000(01)\*
+
+```python
+r = NFA.from_re('(01)*000(01)*')
+r.show()
+r.ε_elimination()
+r.show()
+```
 
 **Problem 9** (20 points) A syntactically valid email address is made up
 of a user name followed by ‘@’ followed by a list of at least two domain
@@ -370,27 +379,22 @@ ab@ab
 
 ab@ab.abcd
 
-1.  Use JFLAP design a deterministic finite automaton to recognize valid
-    mail address. Enclose your DFA’s JFLAP file (.jff) in your
-    homework submission.
+1. Use JFLAP design a deterministic finite automaton to recognize valid mail address. Enclose your DFA’s JFLAP file (.jff) in your homework submission.
 
-Start with a regex:
+![](ev-jflap.png)
 
-(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)*@(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)*.(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0)(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+q+r+s+t+u+v+w+x+y+z+0+1+2+3+4+5+6+7+8+9+0+.)*
+```{python, source='ev.jff', evaluate=False}
+```
 
-2.  Test the above six testing cases using JFLAP Multiple Rn function.
-    You can include more testing cases if you want. Include a screenshot
-    of your testing results in your homework submission as below:
+2. Test the above six testing cases using JFLAP Multiple Rn function. You can include more testing cases if you want. Include a screenshot of your testing results in your homework submission as below:
 
-![](./media/rId7.png){width="4.231999125109361in"
-height="3.6786275153105863in"}
+![](./media/rId7.png)
 
-3.  Use a programming language at your choice to implement the DFA
-    designed in Step 1. Submit your source code and also write a readme
-    file to show how to compile your program, how to run your program,
-    and some testing results you have.
+![](ev-jflap-results.png)
 
-```{python, source='nfa.py', evaluate=False}
+3. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
+
+```{python3, source='nfa.py', evaluate=False}
 ```
 
 

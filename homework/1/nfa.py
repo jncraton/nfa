@@ -436,6 +436,9 @@ class NFA:
 
     The basic algorithm used to convert the RE to an NFA is Thompson's
     construction.
+
+    The RE is an LL(1) grammar, so parsing is very straightforward and
+    only requires looking ahead 1 byte at a time.
     
     >>> n = NFA.from_re('')
     >>> n.test([''],['a'])
@@ -447,6 +450,8 @@ class NFA:
     >>> n.test(['a', 'b'],['','abc', 'ab'])
     >>> n = NFA.from_re('(a)b')
     >>> n.test(['ab'],['','a', 'b'])
+    >>> n = NFA.from_re('(a)(b)')
+    >>> n.test(['ab'],['','a', 'b'])
     >>> n = NFA.from_re('(a+b)c')
     >>> n.test(['ac','bc'],['','a', 'b','aa'])
     >>> n = NFA.from_re('(!+a)bc')
@@ -455,6 +460,8 @@ class NFA:
     >>> n.test(['abd','acd'],['','a', 'b','abc'])
     >>> n = NFA.from_re('a*')
     >>> n.test(['','a','aaaaa'],['b'])
+    >>> n = NFA.from_re('a*b')
+    >>> n.test(['b','ab','aaaab'],['aaa','a'])
     >>> n = NFA.from_re('(ab)*')
     >>> n.test(['','ab','ababab'],['b','aab','aba'])
     """
@@ -463,7 +470,7 @@ class NFA:
       """ 
       Concatentates an RE to an NFA
       """
-      if len(re) == 0:
+      if len(re) == 0 or re[0] == ')':
         return nfa
 
       if len(re) == 1:
@@ -487,14 +494,12 @@ class NFA:
       else:
         lhs = cls.from_re(re[0] if re[0] != '!' else 'ε')
 
-      if re[1] == '*':
+      if len(re) > 1 and re[1] == '*':
         return cls.concat(NFA.concat(nfa, cls.kleene(lhs)), cls.from_re(re[2:]))
+      elif len(re) > 1 and re[1] == '+':
+        return NFA.concat(nfa, NFA.union(lhs, cls.from_re(re[2:])))
       else:
-        nfa = NFA.concat(nfa, lhs)
-        if re[1] == '+':
-          return NFA.union(nfa, cls.from_re(re[2:]))
-        else:
-          return NFA.concat(nfa, cls.from_re(re[1:]))
+        return NFA.concat(nfa, NFA.concat(lhs, cls.from_re(re[1:])))
 
     n = append_re(re)
     n.rename()
