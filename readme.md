@@ -67,6 +67,8 @@ False
 False
 ```
 
+Additional tests can be easily run as above directly in a REPL.
+
 Homework
 --------
 
