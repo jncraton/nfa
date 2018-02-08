@@ -34,17 +34,7 @@ class NFA:
     >>> dfa.accept('b')
     False
     """
-    # Set of states Q
-    self.Q = set([i[0] for i in transitions] + [i[2] for i in transitions])
 
-    # Symbol alphabet Σ
-    self.Σ = set(sum([[c for c in i[1] if c != 'ε'] for i in transitions], []))
-
-    # Transition function relating state and symbol to another state 
-    # δ: Q × Σ → P(Q)
-    # This could just use a dict for DFAs, but that doesn't work for NFAs
-    # We store the set of all transitions, and implement a method δ
-    # to return the set of next states
     self.transitions = [(i[0], char, i[2]) for i in set(transitions) for char in i[1]]
 
     # Start state q0
@@ -53,11 +43,21 @@ class NFA:
     # Accept states F
     self.F = F or set([transitions[-1][2]])
 
+  def Σ(self):
+    """
+    Returns the symbol alphabet Σ
+    """
+    return set(sum([[c for c in i[1] if c != 'ε'] for i in self.transitions], []))
+
   def δ(self, current, input=None):
     """
-    Transition functions δ
+    Transition function relating state and symbol to another state 
+    δ: Q × Σ → P(Q)
 
     Returns a set of next states for a given current state and input
+
+    We store the set of all transitions, and implement a method δ
+    to return the set of next states
 
     Epsilon transitions are returned only if explicitly requested by
     calling without input.
@@ -67,6 +67,12 @@ class NFA:
       return sorted([i[2] for i in self.transitions if i[0] == current and i[1] == input])
     else:
       return sorted([i[2] for i in self.transitions if i[0] == current and i[1] == 'ε'])
+
+  def Q(self):
+    """
+    Returns the set of states Q
+    """
+    return set([i[0] for i in self.transitions] + [i[2] for i in self.transitions])
 
   def accept(self, input, state=None):
     """
@@ -120,12 +126,11 @@ class NFA:
     [('0', 'a', '1')]
     """
 
-    ids = {s: str(i) for (i, s) in enumerate(sorted(list(self.Q)))}
+    ids = {s: str(i) for (i, s) in enumerate(sorted(list(self.Q())))}
 
     self.transitions = [(ids[t[0]], t[1], ids[t[2]]) for t in self.transitions]
     self.F = [ids[f] for f in self.F]
     self.q0 = ids[self.q0]
-    self.Q = set([i[0] for i in self.transitions] + [i[2] for i in self.transitions])
     
   def to_xml(self):
     """
@@ -137,14 +142,14 @@ class NFA:
     >>> len(ev.to_xml())
     19339
     """
-    ids = {s: i for (i, s) in enumerate(self.Q)}
+    ids = {s: i for (i, s) in enumerate(self.Q())}
 
     return '\n'.join(
       ['<?xml version="1.0" encoding="UTF-8" standalone="no"?>', '<structure><type>fa</type><automaton>'] +
       [
         '<state id="%d" name="%s"><x>0</x><y>0</y>%s</state>' %
         ( ids[name], name, '<initial/>' if name == self.q0 else '<final/>' if name in self.F else '' ) 
-        for name in self.Q
+        for name in self.Q()
       ] + [
         '<transition><from>%d</from><to>%d</to><read>%s</read></transition>' % 
         ( ids[t[0]], ids[t[2]], t[1] ) 
@@ -164,7 +169,7 @@ class NFA:
 
     g = graphviz.Digraph(format='png', engine='dot', graph_attr={'rankdir': 'LR', 'packmode':'graph', 'bgcolor': BGCOLOR, 'overlap': 'scale', 'concentrate': 'true', 'splines':'true'})
     
-    for state in self.Q:
+    for state in self.Q():
       g.attr('node', shape='doublecircle' if state in self.F else 'circle')
       g.attr('node', style='bold')
       g.attr('node', color=VIOLET if state in self.F else ORANGE)
@@ -217,8 +222,8 @@ class NFA:
 
     self.transitions = set(self.transitions)
 
-    for q in self.Q:
-      for i in self.Σ:
+    for q in self.Q():
+      for i in self.Σ():
         if len(self.δ(q,i)) > 1:
           states = self.δ(q,i)
           state = "{%s}" % ','.join(states)
@@ -236,8 +241,6 @@ class NFA:
           for s in states:
             if s in self.F:
               self.F.add(state)
-
-          self.Q = set([i[0] for i in self.transitions] + [i[2] for i in self.transitions])
 
           return self.to_dfa()
 
@@ -278,9 +281,6 @@ class NFA:
           self.F.remove(them)
           self.F.add(us)
   
-        # Update set of states
-        self.Q = set([t[0] for t in self.transitions] + [t[2] for t in self.transitions])
-  
         break
 
   @classmethod
@@ -298,11 +298,11 @@ class NFA:
     transitions = []
 
     for at in a.transitions:
-      for bq in b.Q:
+      for bq in b.Q():
         transitions.append(("{%s,%s}" % (at[0], bq), at[1], "{%s,%s}" % (at[2], bq)))
 
     for bt in b.transitions:
-      for aq in a.Q:
+      for aq in a.Q():
         transitions.append(("{%s,%s}" % (aq, bt[0]), bt[1], "{%s,%s}" % (aq, bt[2])))
 
     F = set(["{%s,%s}" % (af, bf) for af in a.F for bf in b.F])
