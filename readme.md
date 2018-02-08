@@ -41,7 +41,7 @@ This package contains many inline doctests for both individual methods and packa
 make test
 ```
 
-If you'd like more detail on individual tests that are executed you may run:
+This will produce no output if everything passed successfully. If you'd like more detail on individual tests that are executed you may run:
 
 ```
 make test-verbose

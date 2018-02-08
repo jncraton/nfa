@@ -11,4 +11,5 @@ install:
   pip install -r requirements.txt
 
 script:
-  make
+  make test-verbose
+  make hw1.html
