@@ -1,14 +1,14 @@
 from string import ascii_lowercase as lower, digits
-import graphviz
 
 from IPython.display import display_html
+import graphviz
 
 class NFA:
   """
-  Implements a Finite Automaton
+  Implements a nondeterministic finite automaton
 
-  This technically implements an NFA, but it can used for DFAs as well
-  because a DFA is just a special of an NFA in terms of implementation
+  This can used for DFAs as well becuase a DFA is just a special case
+  of an NFA.
   """
   
   def __init__(self, transitions, F=None, q0=None):
@@ -25,6 +25,9 @@ class NFA:
     
     An optional set of accept states may be provided. If omitted, the
     last state listed is assumed to be the one and only accept state.
+
+    An optional start state can also be provided. If omitted, the start
+    state is assumed to be the first state listed.
 
     >>> dfa = NFA([('q0','b','q0'),('q0','a','q1')])
     >>> dfa.accept('a')
@@ -52,6 +55,7 @@ class NFA:
   def δ(self, current, input=None):
     """
     Transition function relating state and symbol to another state 
+
     δ: Q × Σ → P(Q)
 
     Returns a set of next states for a given current state and input
@@ -102,7 +106,7 @@ class NFA:
   
     # Recurse using all possible next states and the rest of our input
     #
-    # It's worth noting that the search walk for an NFA take exponential
+    # It's worth noting that the search walk for an NFA takes exponential
     # time, while the conversion to DFA would include an exponential
     # number of states. It's a time/memory tradeoff.
     for n in next:
@@ -177,7 +181,6 @@ class NFA:
       g.node(state)
       
     for e in self.transitions:
-      #g.attr('edge', style='bold')
       g.attr('edge', color=BASE01)
       g.attr('edge', fontcolor=BASE01)
       g.edge(e[0], e[2], e[1])
@@ -248,7 +251,12 @@ class NFA:
     """
     Removes any ε (empty string) transitions from the NFA
 
-    ε doesn't the power of an NFA, but can be a useful conveinience.
+    ε doesn't increase the power of an NFA, but can be a useful
+    conveinience.
+
+    Removing ε transitions involves merging states that are connected
+    via ε transitions and properly handling the transitions from the
+    old states.
 
     >>> n = NFA([(0,'a',1),(0,'ba',0),(1,'ab',1),(0,'ε',1),(1,'b',2)])
     >>> d = NFA.ε_elimination(n)
@@ -381,8 +389,11 @@ class NFA:
   @classmethod
   def kleene(cls, nfa):
     """
-    Returns nfa wrapped in a Kleene star construction
+    Returns `nfa` wrapped in a Kleene star construction
 
+    The new NFA will accept any number of copies of the language that 
+    the original nfa accepts, including zero.
+    
     >>> n = NFA.kleene(NFA([('0','a','1')]))
     >>> n.test(['a','aa','aaa',''],['b'])
     >>> n = NFA.kleene(NFA([('0','a','1'),('1','b','2')]))
@@ -401,7 +412,7 @@ class NFA:
     """
     Builds an NFA instance from a regular expression
 
-    Regular expressions are of the form recognized by JFLAP
+    Regular expressions are of the form recognized by JFLAP.
 
     Some examples:
 
@@ -422,7 +433,9 @@ class NFA:
 
     S → ExpOp
     Exp → a
-    Exp → (a)
+    Exp → Open a Close
+    Open → (
+    Close → )
     Op → o
 
     Where a is a printable character not in o and o is one of:
@@ -440,33 +453,21 @@ class NFA:
     The RE is an LL(1) grammar, so parsing is very straightforward and
     only requires looking ahead 1 byte at a time.
     
-    >>> n = NFA.from_re('')
-    >>> n.test([''],['a'])
-    >>> n = NFA.from_re('a')
-    >>> n.test(['a'],['','aa'])
-    >>> n = NFA.from_re('ab')
-    >>> n.test(['ab'],['','abc','a'])
-    >>> n = NFA.from_re('a+b')
-    >>> n.test(['a', 'b'],['','abc', 'ab'])
-    >>> n = NFA.from_re('(a)b')
-    >>> n.test(['ab'],['','a', 'b'])
-    >>> n = NFA.from_re('(a)(b)')
-    >>> n.test(['ab'],['','a', 'b'])
-    >>> n = NFA.from_re('(a+b)c')
-    >>> n.test(['ac','bc'],['','a', 'b','aa'])
-    >>> n = NFA.from_re('(!+a)bc')
-    >>> n.test(['bc','abc'],['','a', 'b','aa','bbc'])
-    >>> n = NFA.from_re('a(b+c)d')
-    >>> n.test(['abd','acd'],['','a', 'b','abc'])
-    >>> n = NFA.from_re('a*')
-    >>> n.test(['','a','aaaaa'],['b'])
-    >>> n = NFA.from_re('a*b')
-    >>> n.test(['b','ab','aaaab'],['aaa','a'])
-    >>> n = NFA.from_re('(ab)*')
-    >>> n.test(['','ab','ababab'],['b','aab','aba'])
+    >>> NFA.from_re('').test([''],['a'])
+    >>> NFA.from_re('a').test(['a'],['','aa'])
+    >>> NFA.from_re('ab').test(['ab'],['','abc','a'])
+    >>> NFA.from_re('a+b').test(['a', 'b'],['','abc', 'ab'])
+    >>> NFA.from_re('(a)b').test(['ab'],['','a', 'b'])
+    >>> NFA.from_re('(a)(b)').test(['ab'],['','a', 'b'])
+    >>> NFA.from_re('(a+b)c').test(['ac','bc'],['','a', 'b','aa'])
+    >>> NFA.from_re('(!+a)bc').test(['bc','abc'],['','a','aa','bbc'])
+    >>> NFA.from_re('a(b+c)d').test(['abd','acd'],['','a', 'b','abc'])
+    >>> NFA.from_re('a*').test(['','a','aaaaa'],['b'])
+    >>> NFA.from_re('a*b').test(['b','ab','aaaab'],['aaa','a'])
+    >>> NFA.from_re('(ab)*').test(['','ab','ababab'],['b','aab','aba'])
     """
     
-    def append_re(re, nfa=cls([('0','ε','1')], F=[])):
+    def concat_re(re, nfa=cls([('0','ε','1')], F=[])):
       """ 
       Concatentates an RE to an NFA
       """
@@ -476,8 +477,8 @@ class NFA:
       if len(re) == 1:
         return cls([('0',re[0],'1')])
 
-      # Consume the next element. This may be a single char or an
-      # expression wrapped in parens
+      # Consume the left hand side element. This may be a single char or an
+      # expression wrapped in parens. It should not be an operator.
       if re[0] == '(':
         open = 0
         i = 0
@@ -494,6 +495,8 @@ class NFA:
       else:
         lhs = cls.from_re(re[0] if re[0] != '!' else 'ε')
 
+      # Perform the requested operation on the operator and concatenate
+      # the result to the NFA that we've been building
       if len(re) > 1 and re[1] == '*':
         return cls.concat(NFA.concat(nfa, cls.kleene(lhs)), cls.from_re(re[2:]))
       elif len(re) > 1 and re[1] == '+':
@@ -501,7 +504,7 @@ class NFA:
       else:
         return NFA.concat(nfa, NFA.concat(lhs, cls.from_re(re[1:])))
 
-    n = append_re(re)
+    n = concat_re(re)
     n.rename()
     return n
 
@@ -511,19 +514,10 @@ class NFA:
     Builds a DFA instance that operates as a simple email address validator.
     
     >>> ev = NFA.email_validator()
-    >>> ev.accept('abc@dsu.edu')
-    True
-    >>> ev.accept('abc@pluto.dsu.edu')
-    True
-    >>> ev.accept('11@123.com')
-    True
-    >>> ev.accept('a.b.ab')
-    False
-    >>> ev.accept('ab@ab')
-    False
-    >>> ev.accept('ab@ab.abcd')
-    False
+    >>> ev.test(['abc@dsu.edu','abc@pluto.dsu.edu','11@123.com'],
+    ...         ['a.b.ab','ab@ab','ab@ab.abcd'])
     """
+    
     return cls([
       ('start', lower+digits, 'username'),
       ('username', lower+digits, 'username'),
