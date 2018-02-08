@@ -31,3 +31,20 @@ False
 False
 >>> 
 ```
+
+Testing
+-------
+
+This package contains many inline doctests for both individual methods and package-level behaviors. The test suite can be run as `python3 -m doctest nfa/nfa.py` or more simply:
+
+```
+make test
+```
+
+If you'd like more detail on individual tests that are executed you may run:
+
+```
+make test-verbose
+```
+
+These tests are all run automatically by Travis, and you can see the results [here](https://travis-ci.org/jncraton/nfa).
