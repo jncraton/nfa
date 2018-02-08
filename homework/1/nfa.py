@@ -38,7 +38,7 @@ class NFA:
     self.Q = set([i[0] for i in transitions] + [i[2] for i in transitions])
 
     # Symbol alphabet Σ
-    self.Σ = set(sum([[c for c in i[1]] for i in transitions], []))
+    self.Σ = set(sum([[c for c in i[1] if c != 'ε'] for i in transitions], []))
 
     # Transition function relating state and symbol to another state 
     # δ: Q × Σ → P(Q)
@@ -215,13 +215,13 @@ class NFA:
     """
     self.ε_elimination()
 
+    self.transitions = set(self.transitions)
+
     for q in self.Q:
       for i in self.Σ:
         if len(self.δ(q,i)) > 1:
           states = self.δ(q,i)
           state = "{%s}" % ','.join(states)
-
-          self.transitions = set(self.transitions)
 
           # Add transitions pointing from substates
           self.transitions.update(set([(state if t[0] in states else t[0],t[1],t[2]) for t in self.transitions]))
@@ -236,6 +236,8 @@ class NFA:
           for s in states:
             if s in self.F:
               self.F.add(state)
+
+          self.Q = set([i[0] for i in self.transitions] + [i[2] for i in self.transitions])
 
           return self.to_dfa()
 
