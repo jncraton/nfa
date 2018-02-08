@@ -98,7 +98,7 @@ a.test(
 
 Here's the same DFA in JFLAP just to demonstrate that I understand how to use JFLAP:
 
-![](3a1.png)
+![](media/3a1.png)
 
 DFA to recognize at least 2 b's:
 
@@ -121,7 +121,7 @@ b.test(
 
 And again in JFLAP:
 
-![](3a2.png)
+![](media/3a2.png)
 
 Combined DFA:
 
@@ -381,16 +381,16 @@ ab@ab.abcd
 
 1. Use JFLAP design a deterministic finite automaton to recognize valid mail address. Enclose your DFA’s JFLAP file (.jff) in your homework submission.
 
-![](ev-jflap.png)
+![](media/ev-jflap.png)
 
-```{python, source='ev.jff', evaluate=False}
+```{python, source='media/ev.jff', evaluate=False}
 ```
 
 2. Test the above six testing cases using JFLAP Multiple Rn function. You can include more testing cases if you want. Include a screenshot of your testing results in your homework submission as below:
 
 ![](./media/rId7.png)
 
-![](ev-jflap-results.png)
+![](media/ev-jflap-results.png)
 
 3. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
 
