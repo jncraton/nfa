@@ -4,11 +4,6 @@
 
 Due Date: Tuesday, February 13, 2018, By Midnight
 
-(Note: a few questions require you to construct DFAs. An easy way to
-draw a DFA is using the JFLAP software we posted in the class website.
-You can draw the DFAs in the JFLAP and then copy the screen to your
-homework.)
-
 ## Problem 1 (5 points)
 
 > Answer the following questions:
@@ -65,12 +60,11 @@ No. The empty string ε would leave the machine in its start state. The start st
 
 ## Problem 3 (10 points) 
 
-> Each of the following languages is the intersection of two simpler languages. In each part, construct DFAs for the simpler languages, then combine them using the construction
-discussed in footnote 3 (page 46) to give the state diagram of a DFA for the language given. In all parts, Σ = {a, b}.
+> Each of the following languages is the intersection of two simpler languages. In each part, construct DFAs for the simpler languages, then combine them using the construction discussed in footnote 3 (page 46) to give the state diagram of a DFA for the language given. In all parts, Σ = {a, b}.
 
 a. {w| w has at least three a’s and at least two b’s}
 
-From here on, I'll be using the Python class that I have built to work with DFAs from problem 9. The full source is available there.
+From here on, I'll be using the Python package that I have built to work with DFAs from problem 9. The full source is available there and [on Github](https://github.com/jncraton/nfa).
 
 DFA to recognize at least 3 a's:
 
@@ -224,7 +218,7 @@ a.test(
 
 Give state diagrams of NFAs with the specified number of states recognizing each of the following languages. In all parts, the alphabet is {0,1}.
 
-a\. The language {w| w ends with 00} with three states
+a. The language {w| w ends with 00} with three states
 
 ```python
 a = NFA([
@@ -248,13 +242,11 @@ This NFA is also a DFA.
 
 ## Problem 6 (10 points)
 
-Use the construction given in Theorem
-1.39 to convert the following nondeterministic finite automata to
-equivalent deterministic finite automata.
+Use the construction given in Theorem 1.39 to convert the following nondeterministic finite automata to equivalent deterministic finite automata.
 
 ![](./media/rId6.png)
 
-First, let's build that NFA.
+First, let's build that NFA in Python.
 
 ```python
 n = NFA([
@@ -283,7 +275,6 @@ n.test(
   accept = ['a', 'ab', 'aa', 'abbbbba', 'abbbb'],
   reject = ['b', 'ba']
 )
-
 ```
 
 We can then convert to a DFA.
@@ -296,7 +287,6 @@ n.test(
   accept = ['a', 'ab', 'aa', 'abbbbba', 'abbbb'],
   reject = ['b', 'ba']
 )
-
 ```
 
 ## Problem 7 (20 points) 
@@ -304,8 +294,6 @@ n.test(
 Give regular expressions generating the following languages. In all parts the alphabet is {0, 1}
 
 a.  {w | w has at least one 1}
-
-`0*1(0+1)*`
 
 ```python
 r = NFA.from_re('0*1(0+1)*')
@@ -365,34 +353,28 @@ letters \[a-z\] and digits \[0-9\], and the main domain name, i.e., the
 last domain name, contains two or three characters. For example, the
 following three addresses are valid.
 
-abc@dsu.edu
-
-abc@pluto.dsu.edu
-
-11@123.com
+    abc@dsu.edu
+    abc@pluto.dsu.edu
+    11@123.com
 
 but the following three are invalid:
 
-a.b.ab
+    a.b.ab
+    ab@ab
+    ab@ab.abcd
 
-ab@ab
-
-ab@ab.abcd
-
-1. Use JFLAP design a deterministic finite automaton to recognize valid mail address. Enclose your DFA’s JFLAP file (.jff) in your homework submission.
+\1. Use JFLAP design a deterministic finite automaton to recognize valid mail address. Enclose your DFA’s JFLAP file (.jff) in your homework submission.
 
 ![](media/ev-jflap.png)
 
 ```{python, source='media/ev.jff', evaluate=False}
 ```
 
-2. Test the above six testing cases using JFLAP Multiple Rn function. You can include more testing cases if you want. Include a screenshot of your testing results in your homework submission as below:
-
-![](./media/rId7.png)
+\2. Test the above six testing cases using JFLAP Multiple Rn function.
 
 ![](media/ev-jflap-results.png)
 
-3. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
+\3. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
 
 ```{python3, source='nfa/nfa.py', evaluate=False}
 ```
