@@ -305,6 +305,8 @@ Give regular expressions generating the following languages. In all parts the al
 
 a.  {w | w has at least one 1}
 
+`0*1(0+1)*`
+
 ```python
 
 r = NFA.from_re('0*1(0+1)*')
@@ -317,7 +319,29 @@ r.test(['1','01','010','111000101001'],['','0','0000'])
 
 b.  {w | w starts and ends with same symbol}
 
+```python
+
+r = NFA.from_re('(0(0+1)*0)+(1(0+1)*1)+0+1')
+r.show()
+r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101010'])
+r.ε_elimination()
+r.show()
+r.to_dfa()
+r.show()
+r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101010'])
+```
+
 c.  {w | |w| &lt; 5}
+
+```python
+
+r = NFA.from_re('(0+1)(0+1)(0+1)(0+1)')
+r.show()
+r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101010'])
+r.to_dfa()
+r.show()
+r.test(['1','0','11','00','101','010','1010101','0111010'],['10','','01', '10101010'])
+```
 
 d.  {w | every 3rd position of w is 1}
 

@@ -211,7 +211,7 @@ class NFA:
     >>> a = NFA([('0a','a','1a'),('0a','ba','0a'),('1a','ab','1a')])
     >>> a.test(['aba','a'],['b','bbb'])
     >>> a.to_dfa()
-    >>> #a.test(['aba','a'],['b','bbb'])
+    >>> a.test(['aba','a'],['b','bbb'])
     """
     self.ε_elimination()
 
@@ -252,36 +252,34 @@ class NFA:
     >>> n.test(['b','aaab','ababababb'], ['a','ababababa','aaaaa'])
     """
 
-    # Add transitions shared across ε transition
-    for t in set(self.transitions):
-      if t[1] == 'ε':
+    while True:
+      εtransitions = [t for t in self.transitions if t[1] == 'ε']
+
+      if len(εtransitions) == 0:
+        return
+
+      for t in εtransitions:
         us = t[0]
         them = t[2]
             
-        # Follow the transition and add their transitions to ourself
-        self.transitions = list(self.transitions) + [(us,t[1],t[2]) for t in self.transitions if t[0] == them]
-
         # Remove the ε transition
         self.transitions.remove(t)
-
-        # Remove transitions coming from them
-        self.transitions = [t for t in self.transitions if t[0] != them or t[1] == 'ε']
-        #self.transitions = set([(us if t[0] == them else t[0],t[1],t[2]) for t in self.transitions])
-
-        # Rewrite all other transitions to point to us instead of them
+          
+        # Move their transitions to ourself
+        self.transitions = set([(us if t[0] == them else t[0],t[1],t[2]) for t in self.transitions])
         self.transitions = set([(t[0],t[1],us if t[2] == them else t[2]) for t in self.transitions])
-
+  
         # Inherit their other properties
         self.q0 = us if self.q0 == them else self.q0
         self.F = set(self.F)
         if them in self.F:
           self.F.remove(them)
           self.F.add(us)
-
+  
         # Update set of states
         self.Q = set([t[0] for t in self.transitions] + [t[2] for t in self.transitions])
-
-        return self.ε_elimination()
+  
+        break
 
   @classmethod
   def intersection(cls, a, b):
