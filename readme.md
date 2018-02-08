@@ -17,9 +17,9 @@ First, install package dependencies using pip (or pip3 depending on your environ
 Now, you can play around with the package using a Python REPL:
 
 ```python
-~/nfa$ python3
-Python 3.5.2 (default, Nov 23 2017, 16:37:01) 
-[GCC 5.4.0 20160609] on linux
+~/nfa> python3
+Python 3.x.x
+GCC on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> from nfa import NFA
 >>> n = NFA.from_re('ab')
