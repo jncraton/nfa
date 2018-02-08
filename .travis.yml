@@ -8,8 +8,8 @@ python:
   - "nightly"
 
 install:
-  pip install -r requirements.txt
+  - pip install -r requirements.txt
 
 script:
-  make test-verbose
-  make hw1.html
+  - make test-verbose
+  - make hw1.html
