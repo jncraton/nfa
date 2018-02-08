@@ -8,7 +8,7 @@ A Python 3 NFA implementation.
 Getting Started
 ---------------
 
-This assumes that you already have a basic environment setup with Python 3 and make available. Consult your documentation for your operating systems for more information. On Debian based systems, this should just be `sudo apt install build-essential python3`.
+This assumes that you already have a basic environment with [Python 3](https://www.python.org/) and [make](https://www.gnu.org/software/make/) available. Consult the documentation for these applications if you need to install them. On Debian based systems, this should just be `sudo apt install build-essential python3`.
 
 First, install package dependencies using pip (or pip3 depending on your environment):
 
