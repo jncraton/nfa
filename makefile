@@ -6,17 +6,14 @@ hw1.pdf: hw1.md
 hw1.png: hw1.html
 	firefox -screenshot hw1.html
 
-hw1.md: hw1.pmd nfa.py
-	pweave --format=markdown hw1.pmd
-
-hw1.html: hw1.pmd nfa.py
+hw1.html: hw1.pmd nfa/nfa.py
 	pweave --format=md2html hw1.pmd
 
 test:
-	python3 -m doctest nfa.py
+	python3 -m doctest nfa/nfa.py
 
 test-verbose:
-	python3 -m doctest -v nfa.py
+	python3 -m doctest -v nfa/nfa.py
 
 clean:
 	rm -f hw1.html

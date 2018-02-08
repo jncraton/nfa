@@ -74,7 +74,7 @@ From here on, I'll be using the Python class that I have built to work with DFAs
 
 DFA to recognize at least 3 a's:
 
-```{python, source='nfa.py', echo=False}
+```{python, source='nfa/nfa.py', echo=False}
 ```
 
 ```python
@@ -394,7 +394,7 @@ ab@ab.abcd
 
 3. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
 
-```{python3, source='nfa.py', evaluate=False}
+```{python3, source='nfa/nfa.py', evaluate=False}
 ```
 
 
