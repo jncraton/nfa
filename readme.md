@@ -66,3 +66,10 @@ False
 >>> ev.accept('ab@ab.abcd')
 False
 ```
+
+Homework
+--------
+
+This package is part of a homework assignment. The complete homework assignment is also part of this package. The homework is available directly here:
+
+https://rawgit.com/jncraton/nfa/master/hw1.html
