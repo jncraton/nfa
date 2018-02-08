@@ -48,3 +48,21 @@ make test-verbose
 ```
 
 These tests are all run automatically by Travis, and you can see the results [here](https://travis-ci.org/jncraton/nfa).
+
+I've included a basic limited email validator as part of the package. It includes passes the following doctests:
+
+```python
+>>> ev = NFA.email_validator()
+>>> ev.accept('abc@dsu.edu')
+True
+>>> ev.accept('abc@pluto.dsu.edu')
+True
+>>> ev.accept('11@123.com')
+True
+>>> ev.accept('a.b.ab')
+False
+>>> ev.accept('ab@ab')
+False
+>>> ev.accept('ab@ab.abcd')
+False
+```
