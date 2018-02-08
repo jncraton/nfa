@@ -61,6 +61,9 @@ class NFA:
     Transition functions δ
 
     Returns a set of next states for a given current state and input
+
+    Epsilon transitions are returned only if explicitly requested by
+    calling without input.
     """
 
     if input:
