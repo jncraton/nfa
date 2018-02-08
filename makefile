@@ -17,3 +17,5 @@ test-verbose:
 
 clean:
 	rm -f hw1.html
+	rm -rf figures
+	rm -rf __pycache__
