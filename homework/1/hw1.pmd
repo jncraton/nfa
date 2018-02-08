@@ -310,6 +310,9 @@ a.  {w | w has at least one 1}
 r = NFA.from_re('0*1(0+1)*')
 r.show()
 r.test(['1','01','010','111000101001'],['','0','0000'])
+r.to_dfa()
+r.show()
+r.test(['1','01','010','111000101001'],['','0','0000'])
 ```
 
 b.  {w | w starts and ends with same symbol}

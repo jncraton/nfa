@@ -34,9 +34,6 @@ class NFA:
     >>> dfa.accept('b')
     False
     """
-    if len(transitions) == 0:
-      transitions = [('q0','','q0')]
-
     # Set of states Q
     self.Q = set([i[0] for i in transitions] + [i[2] for i in transitions])
 
@@ -128,8 +125,7 @@ class NFA:
     self.transitions = [(ids[t[0]], t[1], ids[t[2]]) for t in self.transitions]
     self.F = [ids[f] for f in self.F]
     self.q0 = ids[self.q0]
-
-    self = NFA(self.transitions, F=self.F, q0=self.q0)
+    self.Q = set([i[0] for i in self.transitions] + [i[2] for i in self.transitions])
     
   def to_xml(self):
     """
@@ -217,6 +213,7 @@ class NFA:
     >>> a.to_dfa()
     >>> #a.test(['aba','a'],['b','bbb'])
     """
+    self.ε_elimination()
 
     for q in self.Q:
       for i in self.Σ:
@@ -262,19 +259,21 @@ class NFA:
         them = t[2]
             
         # Follow the transition and add their transitions to ourself
-        self.transitions += [(us,t[1],t[2]) for t in self.transitions if t[0] == them]
+        self.transitions = list(self.transitions) + [(us,t[1],t[2]) for t in self.transitions if t[0] == them]
 
         # Remove the ε transition
         self.transitions.remove(t)
 
         # Remove transitions coming from them
-        self.transitions = [t for t in self.transitions if t[0] != them]
+        self.transitions = [t for t in self.transitions if t[0] != them or t[1] == 'ε']
+        #self.transitions = set([(us if t[0] == them else t[0],t[1],t[2]) for t in self.transitions])
 
         # Rewrite all other transitions to point to us instead of them
         self.transitions = set([(t[0],t[1],us if t[2] == them else t[2]) for t in self.transitions])
 
         # Inherit their other properties
         self.q0 = us if self.q0 == them else self.q0
+        self.F = set(self.F)
         if them in self.F:
           self.F.remove(them)
           self.F.add(us)
