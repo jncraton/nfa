@@ -375,6 +375,8 @@ Here's the JFLAP XML representations. This is also available in `media/ev.jff`.
 
 3\. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
 
+The full source code and readme is available [on Github](https://github.com/jncraton/nfa). The source for the main project file is also included below.
+
 ```{python3, source='nfa/nfa.py', evaluate=False}
 ```
 
