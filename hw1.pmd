@@ -337,7 +337,7 @@ r.test(['001','111','001111','001001001001'],['','000','001000','00100100'])
 
 Use the procedure described in Lemma 1.55 to convert the following regular expressions to nondeterministic finite automata.
 
-a\. (01)\*000(01)\*
+a. (01)\*000(01)\*
 
 ```python
 r = NFA.from_re('(01)*000(01)*')
@@ -346,12 +346,9 @@ r.ε_elimination()
 r.show()
 ```
 
-**Problem 9** (20 points) A syntactically valid email address is made up
-of a user name followed by ‘@’ followed by a list of at least two domain
-names separated by ‘.’. Assume that user and domain names are made up of
-letters \[a-z\] and digits \[0-9\], and the main domain name, i.e., the
-last domain name, contains two or three characters. For example, the
-following three addresses are valid.
+## Problem 9 (20 points)
+
+A syntactically valid email address is made up of a user name followed by ‘@’ followed by a list of at least two domain names separated by ‘.’. Assume that user and domain names are made up of letters \[a-z\] and digits \[0-9\], and the main domain name, i.e., the last domain name, contains two or three characters. For example, the following three addresses are valid.
 
     abc@dsu.edu
     abc@pluto.dsu.edu
@@ -363,18 +360,20 @@ but the following three are invalid:
     ab@ab
     ab@ab.abcd
 
-\1. Use JFLAP design a deterministic finite automaton to recognize valid mail address. Enclose your DFA’s JFLAP file (.jff) in your homework submission.
+1\. Use JFLAP design a deterministic finite automaton to recognize valid mail address. Enclose your DFA’s JFLAP file (.jff) in your homework submission.
 
 ![](media/ev-jflap.png)
+
+Here's the JFLAP XML representations. This is also available in `media/ev.jff`.
 
 ```{python, source='media/ev.jff', evaluate=False}
 ```
 
-\2. Test the above six testing cases using JFLAP Multiple Rn function.
+2\. Test the above six testing cases using JFLAP Multiple Rn function.
 
-![](media/ev-jflap-results.png)
+ ![](media/ev-jflap-results.png)
 
-\3. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
+3\. Use a programming language at your choice to implement the DFA designed in Step 1. Submit your source code and also write a readme file to show how to compile your program, how to run your program, and some testing results you have.
 
 ```{python3, source='nfa/nfa.py', evaluate=False}
 ```
