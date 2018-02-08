@@ -49,7 +49,7 @@ make test-verbose
 
 These tests are all run automatically by Travis, and you can see the results [here](https://travis-ci.org/jncraton/nfa).
 
-I've included a basic limited email validator as part of the package. It includes passes the following doctests:
+I've included a basic limited email validator as part of the package. It includes and passes the following doctests:
 
 ```python
 >>> ev = NFA.email_validator()
