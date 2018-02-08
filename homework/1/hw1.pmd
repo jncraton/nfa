@@ -268,8 +268,8 @@ n = NFA([
 n.show()
 
 n.test(
-  accept = ['ab', 'aa', 'abbbbba', 'abbbb'],
-  reject = ['a']
+  accept = ['a', 'ab', 'aa', 'abbbbba', 'abbbb'],
+  reject = ['b', 'ba']
 )
 ```
 
@@ -280,8 +280,8 @@ n.ε_elimination()
 n.show()
 
 n.test(
-  accept = ['ab', 'aa', 'abbbbba', 'abbbb'],
-  reject = ['a']
+  accept = ['a', 'ab', 'aa', 'abbbbba', 'abbbb'],
+  reject = ['b', 'ba']
 )
 
 ```
@@ -293,8 +293,8 @@ n.to_dfa()
 n.show()
 
 n.test(
-  accept = ['ab', 'aa', 'abbbbba', 'abbbb'],
-  reject = ['a']
+  accept = ['a', 'ab', 'aa', 'abbbbba', 'abbbb'],
+  reject = ['b', 'ba']
 )
 
 ```
@@ -304,6 +304,13 @@ n.test(
 Give regular expressions generating the following languages. In all parts the alphabet is {0, 1}
 
 a.  {w | w has at least one 1}
+
+```python
+
+r = NFA.from_re('0*1(0+1)*')
+r.show()
+r.test(['1','01','010','111000101001'],['','0','0000'])
+```
 
 b.  {w | w starts and ends with same symbol}
 

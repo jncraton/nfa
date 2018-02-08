@@ -125,6 +125,8 @@ class NFA:
     self.transitions = [(ids[t[0]], t[1], ids[t[2]]) for t in self.transitions]
     self.F = [ids[f] for f in self.F]
     self.q0 = ids[self.q0]
+
+    self = NFA(self.transitions, F=self.F, q0=self.q0)
     
   def to_xml(self):
     """
@@ -256,8 +258,8 @@ class NFA:
         us = t[0]
         them = t[2]
             
-        # Follow the transition and add their external transitions to ourself
-        self.transitions += [(us,t[1],t[2]) for t in self.transitions if t[0] == them and t[2] != us]
+        # Follow the transition and add their transitions to ourself
+        self.transitions += [(us,t[1],t[2]) for t in self.transitions if t[0] == them]
 
         # Remove the ε transition
         self.transitions.remove(t)
@@ -492,7 +494,9 @@ class NFA:
         else:
           return NFA.concat(nfa, cls.from_re(re[1:]))
 
-    return append_re(re)
+    n = append_re(re)
+    n.rename()
+    return n
 
   @classmethod
   def email_validator(cls):
