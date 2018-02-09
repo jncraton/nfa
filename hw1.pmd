@@ -342,7 +342,21 @@ a. (01)\*000(01)\*
 ```python
 r = NFA.from_re('(01)*000(01)*')
 r.show()
+```
+
+It's a bit easier to read without the ε transtions:
+
+```python
 r.ε_elimination()
+r.rename()
+r.show()
+r.test(['000','0100001','01000'],['10','0110'])
+```
+
+Convert to DFA just for fun:
+
+```python
+r.to_dfa()
 r.show()
 ```
 
@@ -364,7 +378,7 @@ but the following three are invalid:
 
 ![](media/ev-jflap.png)
 
-Here's the JFLAP XML representations. This is also available in `media/ev.jff`.
+Here's the JFLAP XML representation. This is also available in `media/ev.jff`.
 
 ```{python, source='media/ev.jff', evaluate=False}
 ```
