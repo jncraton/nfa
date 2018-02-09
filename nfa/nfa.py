@@ -212,6 +212,35 @@ class NFA:
     for r in reject:
       assert self.accept(r) == False, "Failed to reject %s for %s" % (r, sorted(list(self.transitions)))
 
+  def reachable(self):
+    """ 
+    Find all states reachable from the start state
+
+    >>> a = NFA([('0','a','1'),('1','b','2'),('3','a','2')])
+    >>> len(a.reachable())
+    3
+    >>> a = NFA([('0','a','1'),('1','b','2'),('3','a','2'),('3','a','3')])
+    >>> len(a.reachable())
+    3
+    """
+
+    def count_reachable(start=None):
+      if not start:
+        start = self.q0
+        count_reachable.visited = set()
+
+      if start in count_reachable.visited:
+        return
+
+      count_reachable.visited.add(start)
+
+      for q in [t[2] for t in self.transitions if t[0] == start]:
+        count_reachable(q)
+
+      return count_reachable.visited        
+
+    return count_reachable()
+
   def to_dfa(self):
     """
     Convert NFA to DFA in place
@@ -239,6 +268,9 @@ class NFA:
 
           # Adjust recursive transitions
           self.transitions = set([(t[0],t[1],state if t[2] in states and t[0] == state else t[2]) for t in self.transitions])
+
+          # Prune unreachable states
+          self.transitons = set([t for t in self.transitions if t[0] in self.reachable()])
 
           # Copy accept state
           for s in states:
