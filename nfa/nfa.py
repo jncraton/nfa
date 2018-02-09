@@ -241,6 +241,19 @@ class NFA:
 
     return count_reachable()
 
+  def prune_unreachable(self):
+    """
+    Removes unreachable states 
+
+    >>> n = NFA([('0','a','1'),('2','b','1')])
+    >>> len(n.Q())
+    3
+    >>> n.prune_unreachable()
+    >>> len(n.Q())
+    2
+    """
+    self.transitions = set([t for t in self.transitions if t[0] in self.reachable()])
+
   def to_dfa(self):
     """
     Convert NFA to DFA in place
@@ -269,8 +282,7 @@ class NFA:
           # Adjust recursive transitions
           self.transitions = set([(t[0],t[1],state if t[2] in states and t[0] == state else t[2]) for t in self.transitions])
 
-          # Prune unreachable states
-          self.transitons = set([t for t in self.transitions if t[0] in self.reachable()])
+          self.prune_unreachable()
 
           # Copy accept state
           for s in states:
