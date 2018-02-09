@@ -279,7 +279,7 @@ class NFA:
           # Move transition targets to new state
           self.transitions = set([(t[0],t[1],state if t[0] == q and t[1] == i else t[2]) for t in self.transitions])
 
-          # Adjust recursive transitions
+          # Add recursive transitions
           self.transitions = set([(t[0],t[1],state if t[2] in states and t[0] == state else t[2]) for t in self.transitions])
 
           self.prune_unreachable()
