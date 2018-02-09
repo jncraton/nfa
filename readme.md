@@ -29,6 +29,9 @@ True
 False
 >>> n.accept('abc')
 False
+>>> ev = NFA.email_validator()
+>>> ev.accept('abc@dsu.edu')
+True
 >>> 
 ```
 
